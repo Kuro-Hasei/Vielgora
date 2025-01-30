@@ -94,7 +94,7 @@ void menuadmin() {
                 case 2:
                     crudProduk(); break;
                 case 3:
-                    crudAksessoris(); break;
+                    crudAksesoris(); break;
                 case 4:
                     crudMember(); break;
                 case 5:

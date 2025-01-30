@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "D:/Perkuliahan/Project/Vielgora/cmake-build-debug",
-		"source" : "D:/Perkuliahan/Project/Vielgora"
+		"build" : "E:/GIT HUB/Vielgora/cmake-build-debug",
+		"source" : "E:/GIT HUB/Vielgora"
 	},
 	"version" : 
 	{

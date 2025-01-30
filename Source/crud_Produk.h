@@ -265,7 +265,7 @@ void deleteDataProduk() {
     fclose(tempProduk);
 }
 
-void MenuAddProduk() {
+void menuAddProduk() {
     system("cls");
     frame();
 
@@ -386,7 +386,7 @@ void crudProduk() {
         } else if (key == 13) { // Tombol Enter
             switch (menu) {
                 case 1:
-                    MenuAddProduk();
+                    menuAddProduk();
                     break;
                 case 2:
                     menuReadProduk();

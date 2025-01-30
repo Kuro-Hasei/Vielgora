@@ -4,7 +4,7 @@
 #include "Deklarasi.h"
 #include "../Tampilan/Tampilan.h"
 
-/*void inputDiskon1(int n) {
+void inputDiskon1(int n) {
     system("cls");
     templateUI();
     cleanKiri();
@@ -52,27 +52,25 @@
 
         gotoxy(55, 11); getteks(diskon.persentase, 10);
 
-        gotoxy(59, 14); getnum(&diskon.batasPoin, 5);
+        gotoxy(55, 14); getnum(&diskon.batasPoin, 5);
 
         fwrite(&diskon, sizeof(diskon), 1, fileDiskon);
     }
     fclose(fileDiskon);
 }
 
-void readdataProduk2() {
+void readdataDiskon2() {
     cleanKiri();
 
     char id[] = "ID";
     char jenis[] = "JENIS";
-    char nama[] = "NAMA";
-    char harga[] = "HARGA";
-    char status[] = "STATUS";
-
+    char persentase[] = "PERSENTASE";
+    char batasPoin[] = "BATAS POIN";
     int i = 1;
     int yTeks = 4;
 
-    fileProduk = fopen("../Database/dat/Produk.dat", "rb");
-    if (fileProduk == NULL) {
+    fileDiskon = fopen("../Database/dat/Diskon.dat", "rb");
+    if (fileDiskon == NULL) {
         perror("Failed to open file");
         return;
     }
@@ -81,121 +79,114 @@ void readdataProduk2() {
     gotoxy(0, 3);
     SetColorBlock(3, 7);
     gotoxy(3, 2);
-    printf(" %-8s   %-15s   %-30s   %-22s   %-10s\n", id, jenis, nama, harga, status);
+    printf(" %-10s   %-20s   %-30s   %-20s\n", id, jenis, persentase, batasPoin);
 
-    while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
+    while (fread(&diskon, sizeof(diskon), 1, fileDiskon) == 1) {
         gotoxy(3, yTeks);
-        printf(" %-8s   %-15s   %-30s   RP. %-18d   %-10s\n", produk.idPrd, produk.jenisPrd, produk.namaPrd, produk.harga, produk.status);
-
+        printf(" %-10s   %-20s   %-30s   %-20d\n", diskon.idDsk, diskon.jenisDsk, diskon.persentase, diskon.batasPoin);
         if (i % 40 == 0) {
             printf("\n--- Press any key to continue ---\n");
             getchar(); // Wait for user input
             cleanKiri();
             yTeks = 4; // Reset yTeks after clearing screen
             gotoxy(3, 2);
-            printf(" %-8s   %-15s   %-30s   %-22s   %-10s\n", id, jenis, nama, harga, status);
+            printf(" %-10s   %-20s   %-30s   %-20s\n", id, jenis, persentase, batasPoin);
         }
         i++;
         yTeks++;
     }
-    fclose(fileProduk);
+    fclose(fileDiskon);
 }
 
-void updateProduk() {
+void updateDiskon() {
     int found;
     found = 0;
-    char idProduk[10];
+    char idDiskon[10];
     int batasKiri = 5;
 
     retype:
     cleanKanan();
-    readdataProduk2();
+    readdataDiskon2();
     gotoxy(115+12, 5); SetColorBlock(3,7);
     gotoxy(115+8, 10); printf("ID Produk : [      ]");
-    gotoxy(115+22, 10); getteks(idProduk, 4);
+    gotoxy(115+22, 10); getteks(idDiskon, 4);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
-    gotoxy(row+17, 15); getteks(No, 6);#1#
+    gotoxy(row+17, 15); getteks(No, 6);*/
 
     //Membuka file asli dengan mode rb
-    fileProduk = fopen("../Database/dat/Produk.dat", "rb");
+    fileDiskon = fopen("../Database/dat/Diskon.dat", "rb");
     //Membuka file temporary dengan mode wb
-    tempProduk = fopen("../Database/Temp/Temp.dat", "wb");
+    tempDiskon = fopen("../Database/Temp/Temp.dat", "wb");
     //Pencarian data dalam file menggunakan loopung
-    while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
+    while (fread(&diskon, sizeof(diskon), 1, fileDiskon) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(idProduk, produk.idPrd) == 0) {
+        if (strcmp(idDiskon, diskon.idDsk) == 0) {
             found = 1;
             break;
         } else {
-            fwrite(&produk, sizeof(produk), 1, tempProduk);
+            fwrite(&diskon, sizeof(diskon), 1, tempDiskon);
         }
     }
 
     //Proses lanjutan setelah data ditemukan
     if (found == 1) {
         cleanKiri();
-        gotoxy(batasKiri, 3); printf("ID Karyawan");
-        gotoxy(batasKiri+50, 3); printf("| %-40s|", produk.idPrd);
+        gotoxy(batasKiri, 3); printf("ID Diskon");
+        gotoxy(batasKiri+50, 3); printf("| %-40s|", diskon.idDsk);
 
-        gotoxy(batasKiri, 4); printf("Jenis Produk");
-        gotoxy(batasKiri+50, 4); printf("| %-40s|", produk.jenisPrd);
+        gotoxy(batasKiri, 4); printf("Jenis Diskon");
+        gotoxy(batasKiri+50, 4); printf("| %-40s|", diskon.jenisDsk);
 
-        gotoxy(batasKiri, 5); printf("Nama Produk");
-        gotoxy(batasKiri+50, 5); printf("| %-40s|", produk.namaPrd);
+        gotoxy(batasKiri, 5); printf("Persentase");
+        gotoxy(batasKiri+50, 5); printf("| %-40s|", diskon.persentase);
 
-        gotoxy(batasKiri, 6); printf("Harga Produk");
-        gotoxy(batasKiri+50, 6); printf("| RP. %-36d|", produk.harga);
-
-        gotoxy(batasKiri, 7); printf("Status Produk");
-        gotoxy(batasKiri+50, 7); printf("| %-40s|", produk.status);
+        gotoxy(batasKiri, 6); printf("Batas Point");
+        gotoxy(batasKiri+50, 6); printf("| %-40d|", diskon.batasPoin);
 
         // MENAMPILKAN TEKS UNTUK INPUT
         SetColorBlock(3,7);
         gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
         SetColorBlock(3,7);
-        gotoxy(batasKiri, 15); printf("ID Produk");
-        gotoxy(batasKiri+50, 15); printf("| %-40s|", produk.idPrd);
+        gotoxy(batasKiri, 15); printf("ID Diskon");
+        gotoxy(batasKiri+50, 15); printf("| %-40s|", diskon.idDsk);
 
-        gotoxy(batasKiri, 17); printf("Jenis Produk");
-        gotoxy(batasKiri+50, 17); printf("| %-40s|", produk.jenisPrd);
+        gotoxy(batasKiri, 18); printf("Jenis Diskon");
+        gotoxy(batasKiri+50, 18); printf("| %-40s|", diskon.jenisDsk);
 
-        gotoxy(batasKiri, 19); printf("Nama Produk");
-        gotoxy(batasKiri+50, 19); printf("| %-40s|", produk.namaPrd);
+        gotoxy(batasKiri, 21); printf("Persentase");
+        gotoxy(batasKiri+50, 21); printf("| %-40s|", " ");
 
-        gotoxy(batasKiri, 21); printf("Harga Produk");
-        gotoxy(batasKiri+50, 21); printf("| RP. %-36s|", " ");
+        gotoxy(batasKiri, 24); printf("Batas Point");
+        gotoxy(batasKiri+50, 24); printf("| %-40s|", " ");
 
-        gotoxy(batasKiri, 23); printf("Stats Produk");
-        gotoxy(batasKiri+50, 23); printf("| %-40s|", " ");
+        char persentase[10];
+        gotoxy(57, 21); getteks(persentase, 10);
 
-        int hargaTemp;
-        gotoxy(61, 21); getnum(&hargaTemp, 9);
-
-        char statusTemp[15];
-        gotoxy(57, 23); getteks(statusTemp, 15);
+        int batasPoint;
+        gotoxy(57, 24); getnum(&batasPoint, 5);
 
         if (doaction("UBAH DATA") == 1) {
-            strcpy(produk.idPrd, idProduk);
-            produk.harga = hargaTemp;
-            strcpy(produk.status, statusTemp);
+            strcpy(diskon.idDsk, idDiskon);
+            strcpy(diskon.persentase, persentase);
+            diskon.batasPoin = batasPoint;
 
-            fwrite(&produk, sizeof(produk), 1, tempProduk);
-            while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
-                fwrite(&produk, sizeof(produk), 1, tempProduk);
+            fwrite(&diskon, sizeof(diskon), 1, tempDiskon);
+            while (fread(&diskon, sizeof(diskon), 1, fileDiskon) == 1) {
+                fwrite(&diskon, sizeof(diskon), 1, tempDiskon);
             } showMessage("ATTENTION!!", "Data berhasil diubah!");
         } else {
-            fwrite(&produk, sizeof(produk), 1, tempProduk);
-            while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
-                fwrite(&produk, sizeof(produk), 1, tempProduk);
+            fwrite(&diskon, sizeof(diskon), 1, tempDiskon);
+            while (fread(&diskon, sizeof(diskon), 1, fileDiskon) == 1) {
+                fwrite(&diskon, sizeof(diskon), 1, tempDiskon);
             }
         }
     } else {
-        showMessage("ALERT!", "ID Produk tidak ditemukan");
+        showMessage("ALERT!", "ID Diskon tidak ditemukan");
         gotoxy(115+22, 10); printf("%s", "    ");
         goto retype;
     }
-    fclose(fileProduk);
-    fclose(tempProduk);
+    fclose(fileDiskon);
+    fclose(tempDiskon);
 }
 
 void deleteDataDiskon() {
@@ -257,7 +248,7 @@ void deleteDataDiskon() {
     fclose(tempDiskon);
 }
 
-void MenuAddProduk() {
+void menuAddDiskon() {
     system("cls");
     frame();
 
@@ -287,7 +278,7 @@ void menuReadDiskon() {
     getch();
     /*if (lihatDetil() == 1) {
         readDetailKaryawan();
-    }#1#
+    }*/
     system("cls");
     frame();
 }
@@ -296,7 +287,7 @@ void menuUpdateDiskon() {
     //Memanggil prosedur pencarian id kota
     updateDiskon();
     //Membuka file asli dengan mode wb
-    fileDiskon = fopen("../Database/dat/Produk.dat", "wb");
+    fileDiskon = fopen("../Database/dat/Diskon.dat", "wb");
     //Membuka file temporary dengan mode rb
     tempDiskon = fopen("../Database/Temp/Temp.dat", "rb");
 
@@ -328,9 +319,7 @@ void menuDeleteDiskon() {
     fclose(tempDiskon);
     system("cls");
     frame();
-}*/
-
-
+}
 
 // CRUD Menu
 void crudDiskon() {
@@ -378,12 +367,16 @@ void crudDiskon() {
         } else if (key == 13) { // Tombol Enter
             switch (menu) {
                 case 1:
+                    menuAddDiskon();
                     break;
                 case 2:
+                    menuReadDiskon();
                     break;
                 case 3:
+                    menuUpdateDiskon();
                     break;
                 case 4:
+                    menuDeleteDiskon();
                     break;
                 case 5:
                     system("cls");

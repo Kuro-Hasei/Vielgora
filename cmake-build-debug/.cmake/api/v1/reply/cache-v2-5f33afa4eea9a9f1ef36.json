@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "d:/Perkuliahan/Project/Vielgora/cmake-build-debug"
+			"value" : "e:/GIT HUB/Vielgora/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -431,7 +431,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "D:/Perkuliahan/Project/Vielgora/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "E:/GIT HUB/Vielgora/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -503,7 +503,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "D:/Perkuliahan/Project/Vielgora"
+			"value" : "E:/GIT HUB/Vielgora"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1135,7 +1135,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "D:/Perkuliahan/Project/Vielgora/cmake-build-debug"
+			"value" : "E:/GIT HUB/Vielgora/cmake-build-debug"
 		},
 		{
 			"name" : "Vielgora_IS_TOP_LEVEL",
@@ -1159,7 +1159,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "D:/Perkuliahan/Project/Vielgora"
+			"value" : "E:/GIT HUB/Vielgora"
 		},
 		{
 			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",

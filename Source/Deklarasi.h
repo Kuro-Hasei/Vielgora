@@ -94,9 +94,10 @@ FILE *tempSupplier;
 /*==================== DATA AKSESSORIS ====================*/
 typedef struct {
     char idAks[10];
+    char jenisAks[15];
     char namaAks[50];
-    char harga[20];
-    int status;
+    int harga;
+    char status[15];
 } DTAksessoris;
 DTAksessoris aksessoris;
 FILE *fileAksessoris;
@@ -105,7 +106,7 @@ FILE *tempAksessoris;
 /*==================== DATA PRODUK ====================*/
 typedef struct {
     char idPrd[10];
-    char jenisPrd[10];
+    char jenisPrd[15];
     char namaPrd[50];
     int harga;
     char status[15];

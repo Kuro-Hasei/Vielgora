@@ -11,6 +11,7 @@
 
 int main() {
     fullscreen();
+    disableScrollBar();
     system("color 72");
     setConsoleFont(10,25,L"Cascadia Code Bold");
     apk();
