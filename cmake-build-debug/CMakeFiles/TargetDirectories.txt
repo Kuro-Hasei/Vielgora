@@ -1,0 +1,3 @@
+D:/Perkuliahan/Project/Vielgora/cmake-build-debug/CMakeFiles/Vielgora.dir
+D:/Perkuliahan/Project/Vielgora/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Perkuliahan/Project/Vielgora/cmake-build-debug/CMakeFiles/rebuild_cache.dir
