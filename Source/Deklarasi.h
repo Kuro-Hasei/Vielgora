@@ -124,7 +124,7 @@ int jumlahStatusP = 2;
 typedef struct {
     char idLyn[10];
     char jenisLyn[20];
-    char hargaLyn[20];
+    int hargaLyn;
     char status[15];
 } DTLayanan;
 DTLayanan layanan;

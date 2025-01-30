@@ -211,16 +211,16 @@ void deleteDataDiskon() {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
         if (strcmp(idDiskon, diskon.idDsk) == 0) {
             cleanKiri();
-            gotoxy(batasKiri, 5); printf("ID Produk");
+            gotoxy(batasKiri, 5); printf("ID Diskon");
             gotoxy(batasKiri+50, 5); printf("| %-40s|", diskon.idDsk);
 
-            gotoxy(batasKiri, 8); printf("Jenis Produk");
+            gotoxy(batasKiri, 8); printf("Jenis Diskon");
             gotoxy(batasKiri+50, 8); printf("| %-40s|", diskon.jenisDsk);
 
-            gotoxy(batasKiri, 11); printf("Nama Produk");
+            gotoxy(batasKiri, 11); printf("Persentase");
             gotoxy(batasKiri+50, 11); printf("| %-40s|", diskon.persentase);
 
-            gotoxy(batasKiri, 14); printf("Harga Produk");
+            gotoxy(batasKiri, 14); printf("Batas Point");
             gotoxy(batasKiri+50, 14); printf("| %-40d|", diskon.batasPoin);
             getchar(); getchar();
 

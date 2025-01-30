@@ -1,7 +1,6 @@
 #ifndef CRUD_AKSESORIS_H
 #define CRUD_AKSESORIS_H
 
-#include "crud_Produk.h"
 #include "Deklarasi.h"
 #include "../Tampilan/Tampilan.h"
 
