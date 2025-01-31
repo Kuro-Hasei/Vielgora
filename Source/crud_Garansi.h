@@ -202,7 +202,7 @@ void inputGaransi(int n) {
 
         // Menampilkan Teks Untuk Input
         SetColorBlock(3,7);
-        gotoxy(batasKiri, 3); printf("=MASUKKAN DATA GARANSI===========");
+        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA GARANSI ] ===========");
         SetColorBlock(3,7);
         gotoxy(batasKiri, 5); printf("ID Garansi");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", garansi.idGrns);
@@ -237,7 +237,7 @@ void readdataGaransiINJS() {
 
     char id[] = "ID";
     char jenis[] = "JENIS";
-    char durasi[] = "Durasi";
+    char durasi[] = "DURASI";
     char ketentuan[] = "KETENTUAN";
     char status[] = "STATUS";
 

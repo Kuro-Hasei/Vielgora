@@ -84,7 +84,7 @@ void readdataLayanan2() {
 
     while (fread(&layanan, sizeof(layanan), 1, fileLayanan) == 1) {
         gotoxy(3, yTeks);
-        printf(" %-10s   %-25s   %-20d   %-20s\n", layanan.idLyn, layanan.jenisLyn, layanan.hargaLyn, layanan.status);
+        printf(" %-10s   %-25s   RP.%-17d   %-20s\n", layanan.idLyn, layanan.jenisLyn, layanan.hargaLyn, layanan.status);
         if (i % 40 == 0) {
             printf("\n--- Press any key to continue ---\n");
             getchar(); // Wait for user input

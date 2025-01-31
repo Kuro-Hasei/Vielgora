@@ -125,6 +125,7 @@ void menukasir() {
     int totalMenu = 5; // Total jumlah menu
     int key;
 
+    frame();
     cleanKanan();
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)

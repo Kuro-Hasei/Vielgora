@@ -501,14 +501,9 @@ void MenuAddKaryawan() {
     gotoxy(115, 2); SetColorBlock(3,7); printf(" %-35s", Admin);
     gotoxy(115, 41); printf("%38c", space);
     gotoxy(115+12, 5); SetColorBlock(3,7);
-    do {
-        gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-        gotoxy(115+27, 10); scanf("%d", &n);
+    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
+    gotoxy(115+27, 10); scanf("%d", &n);
 
-        if (n == 0) {
-            doaction("KELUAR");
-        }
-    } while (n != 0);
     inputKaryawan(n);
     system("cls");
     frame();

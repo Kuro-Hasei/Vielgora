@@ -46,12 +46,12 @@ void inputProduk1(int n) {
         gotoxy(batasKiri+50, 11); printf("| %-40s|", " ");
 
         gotoxy(batasKiri, 14); printf("Harga Produk");
-        gotoxy(batasKiri+50, 14); printf("| RP.  %-35s|", " ");
+        gotoxy(batasKiri+50, 14); printf("| RP.%-37s|", " ");
 
         gotoxy(batasKiri, 17); printf("status Produk");
         gotoxy(batasKiri+50, 17); printf("| %-40s|", "Tersedia");
 
-        gotoxy(55, 8); getteks(produk.jenisPrd, 50);
+        gotoxy(55, 8); getteks(produk.jenisPrd, 15);
 
         gotoxy(55, 11); getteks(produk.namaPrd, 50);
 
@@ -90,7 +90,7 @@ void readdataProduk2() {
 
     while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
         gotoxy(3, yTeks);
-        printf(" %-8s   %-15s   %-30s   RP. %-18d   %-10s\n", produk.idPrd, produk.jenisPrd, produk.namaPrd, produk.harga, produk.status);
+        printf(" %-8s   %-15s   %-30s   RP.%-19d   %-10s\n", produk.idPrd, produk.jenisPrd, produk.namaPrd, produk.harga, produk.status);
 
         if (i % 40 == 0) {
             printf("\n--- Press any key to continue ---\n");

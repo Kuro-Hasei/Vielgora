@@ -134,9 +134,10 @@ void readdataTrsMemberINJS() {
 void readDetailTrsMember() {
     int batasKiri = 3;
     char idMmbr[10];
-    system("cls");
-    retype:
+    cleanKiri();
+    cleanKanan();
 
+    retype:
     gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", "W E L C O M E  A D M I N");
     gotoxy(115, 41); printf("%38c", ' ');
     gotoxy(127, 5); SetColorBlock(3,7);
@@ -144,7 +145,6 @@ void readDetailTrsMember() {
     gotoxy(129, 15); printf("[        ]");
 
     readdataTrsMemberINJS();
-    frame();
 
     gotoxy(131, 15); getteks(idMmbr, 4);
     cleanKiri();
