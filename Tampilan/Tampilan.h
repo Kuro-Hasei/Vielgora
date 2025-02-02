@@ -5,6 +5,12 @@
 int maxWidht = 173;
 int maxHeight = 42;
 
+const int colorMainText = 4;
+const int colorHeadText = 160;
+const int colorScText = 11;
+const int colorThdText = 112;
+const int text2 = 10;
+
 void SetColorBlock(int foreground, int background)
 {
     int color = foreground + (background << 4);
@@ -58,8 +64,8 @@ void fullscreen() {
 void cleanKanan() {
     char space = ' ';
     for (int i = 1; i <= 41; i++) {
-        gotoxy(113, i);
-        printf("%-60c", space);
+        gotoxy(131, i);
+        printf("%-42c", space);
     }
 }
 
@@ -67,7 +73,7 @@ void cleanKiri() {
     char space = ' ';
     for (int i = 1; i < 41; i++) {
         gotoxy(1, i);
-        printf("%-111c", space);
+        printf("%-129c", space);
     }
 }
 
@@ -109,13 +115,15 @@ void gettodayDate(char dateNow[]) {
 
 void frame() {
     char dateNow[11];
-    SetColorBlock(3,7);
 
-    PrintFile("../TXT/Monitor.txt", 19, 5);
-    PrintFile("../TXT/Vielgora.txt", 30, 12);
+    SetColor(colorMainText);
+    PrintFile("../TXT/Monitor.txt", 26, 5);
+    PrintFile("../TXT/Vielgora.txt", 37, 12);
+    SetColor(text2);
     gettodayDate(dateNow);
-    gotoxy(49,25); printf("%s", dateNow);
+    gotoxy(56,25); printf("%s", dateNow);
 
+    SetColor(colorMainText);
     printASCII(200, 0,maxHeight);
     printASCII(201, 0,0);
     printASCII(187, maxWidht,0);
@@ -127,12 +135,12 @@ void frame() {
         printASCII(205, i, maxHeight);
     }
     for (int i = 1; i < maxHeight; i++) {
-        printASCII(186, 112, i);
+        printASCII(186, 125, i);
         printASCII(186, 0, i);
         printASCII(186, maxWidht, i);
     }
-    printASCII(203, 112, 0);
-    printASCII(202, 112, maxHeight);
+    printASCII(203, 125, 0);
+    printASCII(202, 125, maxHeight);
 }
 
 void templateUI() {
@@ -154,20 +162,12 @@ void templateUI() {
     }
 }
 
-void templateUI2() {
-    SetColorBlock(3,7);
-
-    PrintFile("Txt/template.txt", 15, 6);
-    PrintFile("../Txt/Vielgora.txt", 25, 12);
-
-    frame();
-}
-
 void printKotak(int lebar, int tinggi, int x, int y) {
-    SetColorBlock(3,7);
+    SetColorBlock(4,0);
     int j = 0;
     for (int i = x; i < x + lebar +1; i++) {
-        printASCII(196, i, y-1);
+        printASCII(196, i, y - 1);
+        printASCII(196, i, y + 1);
         printASCII(196, i, y + tinggi);
         j++;
     }
@@ -181,7 +181,6 @@ void printKotak(int lebar, int tinggi, int x, int y) {
     printASCII(218, x, y-1);
     printASCII(217, x+lebar, y+tinggi);
     printASCII(192, x, y+tinggi);
-    SetColorBlock(3,7);
 }
 
 void hideCursor() {
@@ -221,23 +220,26 @@ void disableScrollBar() {
 
 void loading() {
     int x;
-    gotoxy(95, 35);
+    SetColor(colorMainText);
+    gotoxy(73, 36);
     printf("L O A D I N G . . . ");         //Loading
 
-    for (x = 83; x <= 120; x++) {           //atas
+    SetColor(text2);
+    for (x = 71; x <= 101; x++) {           //atas
+        gotoxy(x, 35);
+        printf("%c", 196);
+    }
+    for (x = 71; x <= 101; x++) {           //bawah
         gotoxy(x, 37);
         printf("%c", 196);
     }
-    for (x = 83; x <= 120; x++) {           //bawah
-        gotoxy(x, 39);
-        printf("%c", 196);
-    }
-    for (x = 83; x <= 120; x++) {           //isi
-        _sleep(50);
-        gotoxy(x, 38);
+    for (x = 71; x <= 101; x++) {           //isi
+        Sleep(100);
+        gotoxy(x, 36);
         printf("%c", 219);
     }
-    gotoxy(89, 41);
+    SetColor(colorMainText);
+    gotoxy(71, 36);
     system("pause");
     system("cls");
 }

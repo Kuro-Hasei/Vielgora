@@ -17,12 +17,17 @@
 #include "../Transaksi/Trsk_Member.h"
 #include "../Transaksi/Trsk_Pembelian.h"
 #include "../Transaksi/Trsk_KlaimGaransi.h"
+#include "../Laporan/Laporan.h"
 
 
 void mainPage() {
-    SetColorBlock(3,7);
+    SetColor(colorMainText);
     Sleep(50);
-    PrintFile("../TXT/Vielgora.txt", 60, 12);
+    PrintFile("../TXT/Vielgora.txt", 62, 12);
+    PrintFile("../TXT/Pojok kiri.txt", 2, 1);
+    PrintFile("../TXT/Pojok kanan.txt", 165, 1);
+    PrintFile("../TXT/Pojok bawahKna.txt", 165, 38);
+    PrintFile("../TXT/Pojok bawahKri.txt", 2, 38);
     printASCII(201, 0,0);
     printASCII(187, maxWidht,0);
     for (int i = 1; i < maxWidht; i++) {
@@ -35,36 +40,44 @@ void mainPage() {
     for (int j = 1; j < maxHeight; j++) {
         printASCII(186, maxWidht, j);
         printASCII(186, 0, maxHeight-j);
-        Sleep(30);
+        /*Sleep(30);*/
     }
 
-    SetColorBlock(3,7);
-    gotoxy(70, 40); printf("Press any key to next...");
-    getch();
+    SetColor(text2);
+    loading();
     system("cls");
 }
 
 void menuadmin() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2; // Jarak antar menu (bisa disesuaikan)
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 9; // Total jumlah menu
     int key;
 
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
+
     cleanKanan();
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
+
         for (int i = 1; i <= totalMenu; i++) {
-            if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+            int posisiYMenu = PosisiY + (i - 1) * jarakMenu;
+            if (i == menu) { // Tambahkan tanda "<<<" di menu aktif
+                gotoxy(PosisiX + 22, posisiYMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, posisiYMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX + 3, posisiYMenu);
             switch (i) {
                 case 1: printf("CRUD Karyawan"); break;
                 case 2: printf("CRUD Produk"); break;
@@ -106,39 +119,47 @@ void menuadmin() {
                 case 8:
                     crudDiskon(); break;
                 case 9:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
+                    gotoxy(PosisiX, PosisiY + totalMenu * jarakMenu + 2);
                     printf("Program Terminated.\n");
                     return;
                 default:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
+                    gotoxy(PosisiX, PosisiY + totalMenu * jarakMenu + 2);
                     printf("Input tidak valid. Silakan coba lagi.\n");
             }
         }
     } while (1);
 }
 
+
 void menukasir() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2; // Jarak antar menu
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
 
-    frame();
+    char man[] = "W E L C O M E  K A S I R";
+    char space = ' ';
+
     cleanKanan();
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
+
         for (int i = 1; i <= totalMenu; i++) {
-            if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+            if (i == menu) { // Tambahkan tanda "<<<" di menu aktif
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Transaksi Penjualan"); break;
                 case 2: printf("Transaksi Pembelian"); break;
@@ -168,11 +189,11 @@ void menukasir() {
                 case 4: CrudKlaimGaransi();
                     break;
                 case 5:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
+                    gotoxy(PosisiX, PosisiY + totalMenu * jarakMenu + 2);
                     printf("Program Terminated.\n");
                     return;
                 default:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
+                    gotoxy(PosisiX, PosisiY + totalMenu * jarakMenu + 2);
                     printf("Input tidak valid. Silakan coba lagi.\n");
             }
         }
@@ -180,26 +201,34 @@ void menukasir() {
 }
 
 void menumanager() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2; // Jarak antar menu
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
 
+    char man[] = "W E L C O M E  M A N A G E R";
+    char space = ' ';
+
     cleanKanan();
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
+
         for (int i = 1; i <= totalMenu; i++) {
-            if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+            if (i == menu) { // Tambahkan tanda "<<<" di menu aktif
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Laporan Penjualan"); break;
                 case 2: printf("Laporan Pembelian"); break;
@@ -220,7 +249,9 @@ void menumanager() {
             }
         } else if (key == 13) { // Tombol Enter
             switch (menu) {
-                case 1: break;
+                case 1:
+                    laporanTransaksiPenjualan();
+                    break;
                 case 2: break;
                 case 3: break;
                 case 4: break;
@@ -244,12 +275,13 @@ void login(int width, int height) {
     while (loginAttempts > 0) {
         system("cls"); // Membersihkan layar
         frame();  // Menggambar border
-        printKotak(23,4,130-1,10-2);
+        printKotak(23,4,137,8);
 
-        int PosisiX = 130; // Menyesuaikan posisi teks di tengah
+        int PosisiX = 139; // Menyesuaikan posisi teks di tengah
         int PosisiY = 10;
 
-        gotoxy(PosisiX, PosisiY - 2); printf("===== LOGIN MENU =====");
+        SetColor(text2);
+        gotoxy(PosisiX, PosisiY - 2); printf("====== LOGIN ======");
         gotoxy(PosisiX, PosisiY);     printf("Username: ");
         gotoxy(PosisiX, PosisiY + 1); printf("Password: ");
 
@@ -273,18 +305,12 @@ void login(int width, int height) {
             menukasir();
         } else {
             loginAttempts--;
-            gotoxy(PosisiX, PosisiY + 3);
-            printf("Username atau password salah. %d percobaan tersisa.\n", loginAttempts);
-            gotoxy(PosisiX, PosisiY + 5);
-            printf("Tekan Enter untuk mencoba lagi...");
+            showMessage("ATTENTION", "Username Atau Password Salah");
             getchar(); // Menunggu input sebelum mengulang
-            getchar();
         }
     }
 
-    gotoxy(width / 2 - 20, height - 3);
-    printf("Anda telah kehabisan percobaan login. Program akan keluar.");
-    getchar(); // Menunggu input sebelum keluar
+    showMessage("Program Terminated", "Program Terminated");
     exit(0);
 }
 

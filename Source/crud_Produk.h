@@ -3,6 +3,7 @@
 
 #include "Deklarasi.h"
 #include "../Tampilan/Tampilan.h"
+#include "../Tampilan/Procedure.h"
 
 void inputProduk1(int n) {
     system("cls");
@@ -55,7 +56,7 @@ void inputProduk1(int n) {
 
         gotoxy(55, 11); getteks(produk.namaPrd, 50);
 
-        gotoxy(59, 14); getnum(&produk.harga, 9);
+        getRp(&produk.harga, 5, 9, 59, 14);
 
         strcpy(produk.status, "Tersedia");
 
@@ -82,27 +83,23 @@ void readdataProduk2() {
         return;
     }
 
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColorBlock(3, 7);
-    gotoxy(3, 2);
-    printf(" %-8s   %-15s   %-30s   %-22s   %-10s\n", id, jenis, nama, harga, status);
-
+    //MENAMPILKAN KE LAYAR ISI DARI FILE
     while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-8s   %-15s   %-30s   RP.%-19d   %-10s\n", produk.idPrd, produk.jenisPrd, produk.namaPrd, produk.harga, produk.status);
-
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
-            getchar(); // Wait for user input
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(10, 4);printf("  %-10s  %-15s  %-25s  %-15s  %-20s", id, jenis, nama, harga, status );
+        char hargaPrd[20];
+        rupiah(produk.harga, hargaPrd);
+        gotoxy(10, 6); printf("  %-10s  %-15s  %-25s  RP. %-11s  %-20s", produk.idPrd, produk.jenisPrd, produk.namaPrd, hargaPrd, produk.status );
+        if (i % 35 == 0) {
+            getchar();
             cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-8s   %-15s   %-30s   %-22s   %-10s\n", id, jenis, nama, harga, status);
+            yTeks = 6; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
         }
         i++;
         yTeks++;
     }
+    printTable(10, 100, 3, 38);
+    //MENUTUP FILE
     fclose(fileProduk);
 }
 
@@ -287,15 +284,12 @@ void menuReadProduk() {
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", man);
+    SetColor(text2);
+    gotoxy(115, 2); printf("   %-35s", man);
     gotoxy(115, 41); printf("%38c", space);
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(123, 35); printf("Press ENTER to next...");
+    gotoxy(120, 35); printf("Press ENTER to next...");
     readdataProduk2();
     getch();
-    /*if (lihatDetil() == 1) {
-        readDetailKaryawan();
-    }*/
     system("cls");
     frame();
 }
@@ -342,19 +336,26 @@ void menuDeleteProduk() {
 
 // CRUD Menu
 void crudProduk() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 120; // Posisi menu di layar
     int PosisiY = 10;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
 
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
+
     system("cls");
     frame();
 
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(text2);
+        gotoxy(115, 3); printf("   %-35s", man);
+        gotoxy(115, 41); printf("%38c", space);
+        SetColor(colorMainText);
+
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
                 gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");

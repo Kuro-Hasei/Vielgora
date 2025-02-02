@@ -11,13 +11,6 @@ void transaksiPenjualan() {
     int hargaBarang = 0, hargaLayanan = 0, totalDiskon = 0;
     int lastNumber = 0;
 
-    DTProduk produkTemp;
-    DTAksessoris aksessorisTemp;
-    DTDiskon diskonTemp;
-    DTLayanan layananTemp;
-    DTPenjualan tempPenjualan;
-    DTKaryawan karyawanTemp;
-
     printf("Masukkan ID Karyawan yang melakukan transaksi: ");
     scanf("%s", idKaryawan);
 
@@ -28,8 +21,8 @@ void transaksiPenjualan() {
         return;
     }
 
-    while (fread(&karyawanTemp, sizeof(DTKaryawan), 1, fileKaryawan) == 1) {
-        if (strcmp(karyawanTemp.id, idKaryawan) == 0) {
+    while (fread(&karyawan, sizeof(DTKaryawan), 1, fileKaryawan) == 1) {
+        if (strcmp(karyawan.id, idKaryawan) == 0) {
             foundKaryawan = 1;
             break;
         }
@@ -73,8 +66,8 @@ void transaksiPenjualan() {
     // Cek ID terakhir transaksi
     FILE *fileCheck = fopen("../Database/dat/Penjualan.dat", "rb");
     if (fileCheck != NULL) {
-        while (fread(&tempPenjualan, sizeof(DTPenjualan), 1, fileCheck) == 1) {
-            strcpy(lastID, tempPenjualan.idPenjualan);
+        while (fread(&penjualan, sizeof(DTPenjualan), 1, fileCheck) == 1) {
+            strcpy(lastID, penjualan.idPenjualan);
         }
         fclose(fileCheck);
     }
@@ -91,18 +84,18 @@ void transaksiPenjualan() {
     scanf("%s", idItem);
 
     if (jenisPilihan == 1) {
-        while (fread(&produkTemp, sizeof(DTProduk), 1, fileProduk) == 1) {
-            if (strcmp(produkTemp.idPrd, idItem) == 0) {
+        while (fread(&produk, sizeof(DTProduk), 1, fileProduk) == 1) {
+            if (strcmp(produk.idPrd, idItem) == 0) {
                 foundItem = 1;
-                hargaBarang = produkTemp.harga;
+                hargaBarang = produk.harga;
                 break;
             }
         }
     } else {
-        while (fread(&aksessorisTemp, sizeof(DTAksessoris), 1, fileAksessoris) == 1) {
-            if (strcmp(aksessorisTemp.idAks, idItem) == 0) {
+        while (fread(&aksessoris, sizeof(DTAksessoris), 1, fileAksessoris) == 1) {
+            if (strcmp(aksessoris.idAks, idItem) == 0) {
                 foundItem = 2;
-                hargaBarang = aksessorisTemp.harga;
+                hargaBarang = aksessoris.harga;
                 break;
             }
         }
@@ -122,10 +115,10 @@ void transaksiPenjualan() {
         printf("Masukkan ID Diskon (jika ada, jika tidak ketik '0'): ");
         scanf("%s", idDiskon);
         if (strcmp(idDiskon, "0") != 0) {
-            while (fread(&diskonTemp, sizeof(DTDiskon), 1, fileDiskon) == 1) {
-                if (strcmp(diskonTemp.idDsk, idDiskon) == 0) {
+            while (fread(&diskon, sizeof(DTDiskon), 1, fileDiskon) == 1) {
+                if (strcmp(diskon.idDsk, idDiskon) == 0) {
                     foundDiskon = 1;
-                    totalDiskon = (hargaBarang * jumlah * atoi(diskonTemp.persentase)) / 100;
+                    totalDiskon = (hargaBarang * jumlah * atoi(diskon.persentase)) / 100;
                     break;
                 }
             }
@@ -139,10 +132,10 @@ void transaksiPenjualan() {
         printf("Masukkan ID Layanan (jika ada, jika tidak ketik '0'): ");
         scanf("%s", idLayanan);
         if (strcmp(idLayanan, "0") != 0) {
-            while (fread(&layananTemp, sizeof(DTLayanan), 1, fileLayanan) == 1) {
-                if (strcmp(layananTemp.idLyn, idLayanan) == 0) {
+            while (fread(&layanan, sizeof(DTLayanan), 1, fileLayanan) == 1) {
+                if (strcmp(layanan.idLyn, idLayanan) == 0) {
                     foundLayanan = 1;
-                    hargaLayanan = layananTemp.hargaLyn;
+                    hargaLayanan = layanan.hargaLyn;
                     break;
                 }
             }
@@ -155,11 +148,11 @@ void transaksiPenjualan() {
     struct tm tm = *localtime(&t);
     snprintf(penjualan.tanggalPenjualan, sizeof(penjualan.tanggalPenjualan), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
 
-    penjualan.jenisTerjual = jenisPilihan;
+    penjualan.kategori = jenisPilihan;
     penjualan.totalPenjualan = jumlah;
     penjualan.totalPromo = totalDiskon;
     penjualan.totalHarga = (hargaBarang * jumlah) - totalDiskon + hargaLayanan;
-    strcpy(penjualan.namaKRY, karyawanTemp.namaKry); // Gunakan nama dari database karyawan
+    strcpy(penjualan.namaKRY, karyawan.namaKry); // Gunakan nama dari database karyawan
     strcpy(penjualan.Metode, "Cash");
 
     fwrite(&penjualan, sizeof(DTPenjualan), 1, filePenjualan);
@@ -168,15 +161,15 @@ void transaksiPenjualan() {
     printf("\n\n=== STRUK PENJUALAN ===\n");
     printf("ID Penjualan      : %s\n", penjualan.idPenjualan);
     printf("Tanggal Penjualan : %s\n", penjualan.tanggalPenjualan);
-    printf("Barang            : %s\n", foundItem == 1 ? produkTemp.namaPrd : aksessorisTemp.namaAks);
+    printf("Barang            : %s\n", foundItem == 1 ? produk.namaPrd : aksessoris.namaAks);
     printf("Jumlah            : %d\n", penjualan.totalPenjualan);
     printf("Harga Satuan      : RP. %d\n", hargaBarang);
     printf("Total Harga       : RP. %d\n", hargaBarang * jumlah);
     if (foundDiskon) {
-        printf("Diskon (%s)  : -RP. %d\n", diskonTemp.jenisDsk, totalDiskon);
+        printf("Diskon (%s)  : RP. %d\n", diskon.jenisDsk, totalDiskon);
     }
     if (foundLayanan) {
-        printf("Layanan (%s)  : +RP. %d\n", layananTemp.jenisLyn, hargaLayanan);
+        printf("Layanan (%s)  : RP. %d\n", layanan.jenisLyn, hargaLayanan);
     }
     printf("Total Bayar       : RP. %d\n", penjualan.totalHarga);
     printf("Karyawan          : %s\n", penjualan.namaKRY);
@@ -186,276 +179,6 @@ void transaksiPenjualan() {
     if (jenisPilihan == 1) fclose(fileProduk);
     else fclose(fileAksessoris);
 }
-
-
-/*void transaksiPenjualan() {
-    system("cls");
-    char idItem[10], idDiskon[10], idLayanan[10];
-    int jumlah, jenisPilihan;
-    int foundItem = 0, foundDiskon = 0, foundLayanan = 0;
-    int hargaBarang = 0, hargaLayanan = 0, totalDiskon = 0;
-
-    DTProduk produkTemp;
-    DTAksessoris aksessorisTemp;
-    DTDiskon diskonTemp;
-    DTLayanan layananTemp;
-
-    printf("Pilih jenis barang yang ingin dijual:\n");
-    printf("1. Produk\n");
-    printf("2. Aksesoris\n");
-    printf("Pilihan: ");
-    scanf("%d", &jenisPilihan);
-
-    if (jenisPilihan == 1) {
-        fileProduk = fopen("../Database/dat/Produk.dat", "rb");
-        if (fileProduk == NULL) {
-            perror("Failed to open Produk.dat");
-            return;
-        }
-    } else if (jenisPilihan == 2) {
-        fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
-        if (fileAksessoris == NULL) {
-            perror("Failed to open Aksessoris.dat");
-            return;
-        }
-    } else {
-        printf("Pilihan tidak valid!\n");
-        return;
-    }
-
-    filePenjualan = fopen("../Database/dat/Penjualan.dat", "ab+");
-    if (filePenjualan == NULL) {
-        perror("Failed to open Penjualan.dat");
-        return;
-    }
-
-    printf("Masukkan ID barang yang ingin dijual: ");
-    scanf("%s", idItem);
-
-    if (jenisPilihan == 1) {
-        while (fread(&produkTemp, sizeof(DTProduk), 1, fileProduk) == 1) {
-            if (strcmp(produkTemp.idPrd, idItem) == 0) {
-                foundItem = 1;
-                hargaBarang = produkTemp.harga;
-                break;
-            }
-        }
-    } else {
-        while (fread(&aksessorisTemp, sizeof(DTAksessoris), 1, fileAksessoris) == 1) {
-            if (strcmp(aksessorisTemp.idAks, idItem) == 0) {
-                foundItem = 2;
-                hargaBarang = aksessorisTemp.harga;
-                break;
-            }
-        }
-    }
-
-    if (!foundItem) {
-        printf("Barang dengan ID %s tidak ditemukan!\n", idItem);
-        return;
-    }
-
-    printf("\nMasukkan jumlah barang yang terjual: ");
-    scanf("%d", &jumlah);
-
-    // Cek apakah ada diskon yang bisa diterapkan
-    fileDiskon = fopen("../Database/dat/Diskon.dat", "rb");
-    if (fileDiskon != NULL) {
-        printf("Masukkan ID Diskon (jika ada, jika tidak ketik '0'): ");
-        scanf("%s", idDiskon);
-        if (strcmp(idDiskon, "0") != 0) {
-            while (fread(&diskonTemp, sizeof(DTDiskon), 1, fileDiskon) == 1) {
-                if (strcmp(diskonTemp.idDsk, idDiskon) == 0) {
-                    foundDiskon = 1;
-                    totalDiskon = (hargaBarang * jumlah * atoi(diskonTemp.persentase)) / 100;
-                    break;
-                }
-            }
-        }
-        fclose(fileDiskon);
-    }
-
-    // Pilih layanan tambahan
-    fileLayanan = fopen("../Database/dat/Layanan.dat", "rb");
-    if (fileLayanan != NULL) {
-        printf("Masukkan ID Layanan (jika ada, jika tidak ketik '0'): ");
-        scanf("%s", idLayanan);
-        if (strcmp(idLayanan, "0") != 0) {
-            while (fread(&layananTemp, sizeof(DTLayanan), 1, fileLayanan) == 1) {
-                if (strcmp(layananTemp.idLyn, idLayanan) == 0) {
-                    foundLayanan = 1;
-                    hargaLayanan = layananTemp.hargaLyn;
-                    break;
-                }
-            }
-        }
-        fclose(fileLayanan);
-    }
-
-    // Menyimpan data transaksi
-    snprintf(penjualan.idPenjualan, sizeof(penjualan.idPenjualan), "PJ%d", ftell(filePenjualan) / sizeof(DTPenjualan) + 1);
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    snprintf(penjualan.tanggalPenjualan, sizeof(penjualan.tanggalPenjualan), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
-
-    penjualan.jenisTerjual = jenisPilihan;
-    penjualan.totalPenjualan = jumlah;
-    penjualan.totalPromo = totalDiskon;
-    penjualan.totalHarga = (hargaBarang * jumlah) - totalDiskon + hargaLayanan;
-    strcpy(penjualan.namaKRY, "Karyawan A");
-    strcpy(penjualan.Metode, "Cash");
-
-    fwrite(&penjualan, sizeof(DTPenjualan), 1, filePenjualan);
-
-    // Menampilkan struk
-    printf("\n\n=== STRUK PENJUALAN ===\n");
-    printf("ID Penjualan      : %s\n", penjualan.idPenjualan);
-    printf("Tanggal Penjualan : %s\n", penjualan.tanggalPenjualan);
-    printf("Barang            : %s\n", foundItem == 1 ? produkTemp.namaPrd : aksessorisTemp.namaAks);
-    printf("Jumlah            : %d\n", penjualan.totalPenjualan);
-    printf("Harga Satuan      : RP. %d\n", hargaBarang);
-    printf("Total Harga       : RP. %d\n", hargaBarang * jumlah);
-    if (foundDiskon) {
-        printf("Diskon (%s)  : -RP. %d\n", diskonTemp.jenisDsk, totalDiskon);
-    }
-    if (foundLayanan) {
-        printf("Layanan (%s)  : +RP. %d\n", layananTemp.jenisLyn, hargaLayanan);
-    }
-    printf("Total Bayar       : RP. %d\n", penjualan.totalHarga);
-    printf("Karyawan          : %s\n", penjualan.namaKRY);
-    printf("Metode Pembayaran : %s\n", penjualan.Metode);
-
-    fclose(filePenjualan);
-    if (jenisPilihan == 1) fclose(fileProduk);
-    else fclose(fileAksessoris);
-}*/
-
-/*void transaksiPenjualan() {
-    system("cls");
-    char idItem[10];
-    int jumlah, jenisPilihan;
-    int foundItem = 0;
-    DTProduk produkTemp;
-    DTAksessoris aksessorisTemp;
-
-    printf("Pilih jenis barang yang ingin dijual:\n");
-    printf("1. Produk\n");
-    printf("2. Aksesoris\n");
-    printf("Pilihan: ");
-    scanf("%d", &jenisPilihan);
-
-    if (jenisPilihan == 1) {
-        fileProduk = fopen("../Database/dat/Produk.dat", "rb");
-        if (fileProduk == NULL) {
-            perror("Failed to open Produk.dat");
-            return;
-        }
-    } else if (jenisPilihan == 2) {
-        fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
-        if (fileAksessoris == NULL) {
-            perror("Failed to open Aksessoris.dat");
-            return;
-        }
-    } else {
-        printf("Pilihan tidak valid!\n");
-        return;
-    }
-
-    filePenjualan = fopen("../Database/dat/Penjualan.dat", "ab+");
-    if (filePenjualan == NULL) {
-        perror("Failed to open Penjualan.dat");
-        return;
-    }
-
-    printf("Masukkan ID barang yang ingin dijual: ");
-    scanf("%s", idItem);
-
-    if (jenisPilihan == 1) {
-        while (fread(&produkTemp, sizeof(DTProduk), 1, fileProduk) == 1) {
-            if (strcmp(produkTemp.idPrd, idItem) == 0) {
-                foundItem = 1;
-                break;
-            }
-        }
-    } else {
-        while (fread(&aksessorisTemp, sizeof(DTAksessoris), 1, fileAksessoris) == 1) {
-            if (strcmp(aksessorisTemp.idAks, idItem) == 0) {
-                foundItem = 2;
-                break;
-            }
-        }
-    }
-
-    if (!foundItem) {
-        printf("Barang dengan ID %s tidak ditemukan!\n", idItem);
-        return;
-    }
-
-    printf("\nBarang Ditemukan:\n");
-    if (foundItem == 1) {
-        printf("ID Produk   : %s\n", produkTemp.idPrd);
-        printf("Nama Produk : %s\n", produkTemp.namaPrd);
-        printf("Harga       : RP. %d\n", produkTemp.harga);
-    } else {
-        printf("ID Aksesoris   : %s\n", aksessorisTemp.idAks);
-        printf("Nama Aksesoris : %s\n", aksessorisTemp.namaAks);
-        printf("Harga         : RP. %d\n", aksessorisTemp.harga);
-    }
-
-    printf("\nMasukkan jumlah barang yang terjual: ");
-    scanf("%d", &jumlah);
-
-    snprintf(penjualan.idPenjualan, sizeof(penjualan.idPenjualan), "PJ%d", ftell(filePenjualan) / sizeof(DTPenjualan) + 1);
-
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    snprintf(penjualan.tanggalPenjualan, sizeof(penjualan.tanggalPenjualan), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
-
-    penjualan.jenisTerjual = jenisPilihan;
-    penjualan.totalPenjualan = jumlah;
-    penjualan.totalPromo = 0;
-    penjualan.totalHarga = jumlah * (foundItem == 1 ? produkTemp.harga : aksessorisTemp.harga);
-    strcpy(penjualan.namaKRY, "Karyawan A");
-    strcpy(penjualan.Metode, "Cash");
-
-    fwrite(&penjualan, sizeof(DTPenjualan), 1, filePenjualan);
-
-    printf("\n\n=== STRUK PENJUALAN ===\n");
-    printf("ID Penjualan      : %s\n", penjualan.idPenjualan);
-    printf("Tanggal Penjualan : %s\n", penjualan.tanggalPenjualan);
-    printf("Barang            : %s\n", foundItem == 1 ? produkTemp.namaPrd : aksessorisTemp.namaAks);
-    printf("Jumlah            : %d\n", penjualan.totalPenjualan);
-    printf("Total Harga       : RP. %d\n", penjualan.totalHarga);
-    printf("Karyawan          : %s\n", penjualan.namaKRY);
-    printf("Metode Pembayaran : %s\n", penjualan.Metode);
-
-    fclose(filePenjualan);
-    if (jenisPilihan == 1) fclose(fileProduk);
-    else fclose(fileAksessoris);
-}*/
-
-
-/*void displayTransaksiPenjualan() {
-    system("cls");
-    int yTeks = 4;
-
-    filePenjualan = fopen("../Database/dat/Penjualan.dat", "rb");
-    if (filePenjualan == NULL) {
-        perror("Failed to open Penjualan.dat");
-        return;
-    }
-
-    printf("%-10s %-15s %-15s %-15s %-15s %-15s %-15s\n", "ID", "Tanggal", "Jenis", "Total", "Promo", "Harga", "Metode");
-
-    while (fread(&penjualan, sizeof(DTPenjualan), 1, filePenjualan) == 1) {
-        printf("%-10s %-15s %-15d %-15d %-15d %-15d %-15s\n",
-               penjualan.idPenjualan, penjualan.tanggalPenjualan, penjualan.jenisTerjual, penjualan.totalPenjualan,
-               penjualan.totalPromo, penjualan.totalHarga, penjualan.Metode);
-        yTeks++;
-    }
-
-    fclose(filePenjualan);
-}*/
 
 void displayTransaksiPenjualan() {
     system("cls");
@@ -473,7 +196,7 @@ void displayTransaksiPenjualan() {
 
     while (fread(&penjualan, sizeof(DTPenjualan), 1, filePenjualan) == 1) {
         printf("%-10s %-15s %-15d %-15d %-15d %-15d %-15s\n",
-               penjualan.idPenjualan, penjualan.tanggalPenjualan, penjualan.jenisTerjual, penjualan.totalPenjualan,
+               penjualan.idPenjualan, penjualan.tanggalPenjualan, penjualan.kategori, penjualan.totalPenjualan,
                penjualan.totalPromo, penjualan.totalHarga, penjualan.Metode);
     }
 
@@ -495,7 +218,7 @@ void displayTransaksiPenjualan() {
             return;
         }
 
-        while (fread(&penjualan, sizeof(DTPenjualan), 1, filePenjualan) == 1) {
+        while (fread(&penjualan, sizeof(penjualan), 1, filePenjualan) == 1) {
             if (strcmp(penjualan.idPenjualan, idPenjualanCari) == 0) {
                 found = 1;
                 break;
@@ -513,7 +236,7 @@ void displayTransaksiPenjualan() {
         printf("\n\n=== STRUK PENJUALAN ===\n");
         printf("ID Penjualan      : %s\n", penjualan.idPenjualan);
         printf("Tanggal Penjualan : %s\n", penjualan.tanggalPenjualan);
-        printf("Barang            : %s\n", penjualan.jenisTerjual == 1 ? "Produk" : "Aksesoris");
+        printf("Barang            : %s\n", penjualan.kategori == 1 ? produk.namaPrd : aksessoris.namaAks);
         printf("Jumlah            : %d\n", penjualan.totalPenjualan);
         printf("Total Harga       : RP. %d\n", penjualan.totalHarga + penjualan.totalPromo);
         if (penjualan.totalPromo > 0) {

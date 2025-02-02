@@ -170,7 +170,7 @@ FILE *tempPembelian;
 typedef struct {
     char idPenjualan[10];
     char tanggalPenjualan[15];
-    int jenisTerjual;
+    int kategori;
     int totalPenjualan;
     int totalPromo;
     int totalHarga;

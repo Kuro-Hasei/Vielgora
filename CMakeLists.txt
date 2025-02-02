@@ -21,5 +21,6 @@ add_executable(Vielgora TokoVielgora.c
         Transaksi/Trsk_Pembelian.h
         Transaksi/Trsk_Penjualan.h
         Transaksi/Trsk_Member.h
-        Transaksi/Trsk_KlaimGaransi.h)
+        Transaksi/Trsk_KlaimGaransi.h
+        Laporan/Laporan.h)
 

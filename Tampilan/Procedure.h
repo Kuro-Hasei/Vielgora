@@ -7,8 +7,6 @@
 #include <string.h>
 #include <time.h>
 
-#include "Tampilan.h"
-
 /*==================== FUNCTION BUTTONS ====================*/
 #define ENTER 13
 #define TAB 9
