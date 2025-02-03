@@ -135,7 +135,7 @@ FILE *tempLayanan;
 typedef struct {
     char idGrns[10];
     char jenisGrns[20];
-    char durasi[30];
+    int durasi;
     char ketentuan[50];
     char status[10];
 } DTGaransi;
@@ -170,9 +170,12 @@ FILE *tempPembelian;
 typedef struct {
     char idPenjualan[10];
     char tanggalPenjualan[15];
-    int kategori;
+    char kategori[50];
     int totalPenjualan;
+    int hargaSatuan;
     int totalPromo;
+    int hargaLayanan;
+    int garansi;
     int totalHarga;
     char namaKRY[50];
     char Metode [20];

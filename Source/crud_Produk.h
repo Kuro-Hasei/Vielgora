@@ -8,11 +8,10 @@
 void inputProduk1(int n) {
     system("cls");
     templateUI();
-    cleanKiri();
 
     char kodeProduk[] = {"PRD"};
     int idTerakhir = 0;
-    int batasKiri = 3;
+    int batasKiri = 5;
 
     fileProduk = fopen("../Database/dat/Produk.dat", "ab+");
     if (fileProduk == NULL) {
@@ -25,7 +24,7 @@ void inputProduk1(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(produk.idPrd, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
+    gotoxy(batasKiri, 2); SetColor(colorMainText);
 
     // Looping pembuatan id cabang
     for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
@@ -34,9 +33,8 @@ void inputProduk1(int n) {
         snprintf(produk.idPrd, sizeof(produk.idPrd), "%s%i", kodeProduk, i);
 
         // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
-        gotoxy(batasKiri, 3); printf("=MASUKKAN DATA PRODUK===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
+        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA PRODUK ] ===========");
         gotoxy(batasKiri, 5); printf("ID Produk");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", produk.idPrd);
 
@@ -52,11 +50,11 @@ void inputProduk1(int n) {
         gotoxy(batasKiri, 17); printf("status Produk");
         gotoxy(batasKiri+50, 17); printf("| %-40s|", "Tersedia");
 
-        gotoxy(55, 8); getteks(produk.jenisPrd, 15);
+        gotoxy(57, 8); getteks(produk.jenisPrd, 15);
 
-        gotoxy(55, 11); getteks(produk.namaPrd, 50);
+        gotoxy(57, 11); getteks(produk.namaPrd, 50);
 
-        getRp(&produk.harga, 5, 9, 59, 14);
+        getRp(&produk.harga, 5, 9, 61, 14);
 
         strcpy(produk.status, "Tersedia");
 
@@ -75,7 +73,7 @@ void readdataProduk2() {
     char status[] = "STATUS";
 
     int i = 1;
-    int yTeks = 4;
+    int yTeks = 6;
 
     fileProduk = fopen("../Database/dat/Produk.dat", "rb");
     if (fileProduk == NULL) {
@@ -85,20 +83,20 @@ void readdataProduk2() {
 
     //MENAMPILKAN KE LAYAR ISI DARI FILE
     while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
+        printTable(10, 100, 3, 38);
         gotoxy(0, 6); SetColor(colorScText);
-        gotoxy(10, 4);printf("  %-10s  %-15s  %-25s  %-15s  %-20s", id, jenis, nama, harga, status );
+        gotoxy(10, 4);printf("  %-10s  %-15s  %-25s  %-20s  %-20s", id, jenis, nama, harga, status );
         char hargaPrd[20];
         rupiah(produk.harga, hargaPrd);
-        gotoxy(10, 6); printf("  %-10s  %-15s  %-25s  RP. %-11s  %-20s", produk.idPrd, produk.jenisPrd, produk.namaPrd, hargaPrd, produk.status );
+        gotoxy(10, yTeks); printf("  %-10s  %-15s  %-25s  RP. %-16s  %-20s", produk.idPrd, produk.jenisPrd, produk.namaPrd, hargaPrd, produk.status );
         if (i % 35 == 0) {
             getchar();
             cleanKiri();
-            yTeks = 6; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
+            yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
         }
         i++;
         yTeks++;
     }
-    printTable(10, 100, 3, 38);
     //MENUTUP FILE
     fclose(fileProduk);
 }
@@ -108,13 +106,14 @@ void updateProduk() {
     found = 0;
     char idProduk[10];
     int batasKiri = 5;
+    char hargaPrd[20];
 
     retype:
     cleanKanan();
     readdataProduk2();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Produk : [      ]");
-    gotoxy(115+22, 10); getteks(idProduk, 4);
+    gotoxy(135, 5); SetColor(text2);
+    gotoxy(135, 10); printf("ID Produk : [      ]");
+    gotoxy(149, 10); getteks(idProduk, 4);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -136,6 +135,7 @@ void updateProduk() {
     //Proses lanjutan setelah data ditemukan
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("ID Karyawan");
         gotoxy(batasKiri+50, 3); printf("| %-40s|", produk.idPrd);
 
@@ -146,15 +146,16 @@ void updateProduk() {
         gotoxy(batasKiri+50, 5); printf("| %-40s|", produk.namaPrd);
 
         gotoxy(batasKiri, 6); printf("Harga Produk");
-        gotoxy(batasKiri+50, 6); printf("| RP. %-36d|", produk.harga);
+        rupiah(produk.harga, hargaPrd);
+        gotoxy(batasKiri+50, 6); printf("| RP.%-37s|", hargaPrd);
 
         gotoxy(batasKiri, 7); printf("Status Produk");
         gotoxy(batasKiri+50, 7); printf("| %-40s|", produk.status);
 
         // MENAMPILKAN TEKS UNTUK INPUT
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Produk");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", produk.idPrd);
 
@@ -171,7 +172,7 @@ void updateProduk() {
         gotoxy(batasKiri+50, 23); printf("| %-40s|", " ");
 
         int hargaTemp;
-        gotoxy(61, 21); getnum(&hargaTemp, 9);
+        getRp(&hargaTemp, 5, 9, 61, 21);
 
         char statusTemp[15];
         gotoxy(57, 23); getteks(statusTemp, 15);
@@ -193,7 +194,6 @@ void updateProduk() {
         }
     } else {
         showMessage("ALERT!", "ID Produk tidak ditemukan");
-        gotoxy(115+22, 10); printf("%s", "    ");
         goto retype;
     }
     fclose(fileProduk);
@@ -205,13 +205,19 @@ void deleteDataProduk() {
     found = 0;
     char idProduk[10];
     int batasKiri = 5;
+    int PosisiX = 135;
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     retype:
     cleanKanan();
     readdataProduk2();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Produk : [      ]");
-    gotoxy(115+22, 10); getteks(idProduk, 4);
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("ID Produk : [      ]");
+    gotoxy(PosisiX+14, 10); getteks(idProduk, 4);
 
     //Membuka file asli dengan mode rb
     fileProduk = fopen("../Database/dat/Produk.dat", "rb");
@@ -254,8 +260,7 @@ void deleteDataProduk() {
     }
     if (found == 0) {
         showMessage("ALERT!", "ID Karyawan tidak ditemukan");
-        gotoxy(115+22, 10); printf("%s", "    ");
-        goto retype;
+        return;
     }
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileProduk);
@@ -263,17 +268,19 @@ void deleteDataProduk() {
 }
 
 void menuAddProduk() {
-    system("cls");
-    frame();
+    cleanKanan();
+    int PosisiX = 135;
 
     int n;
-    char Admin[] = "W E L C O M E  A D M I N";
+    char man[] = "W E L C O M E  A D M I N";
     char space = " ";
-    gotoxy(115, 2); SetColorBlock(3,7); printf(" %-35s", Admin);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-    gotoxy(115+27, 10); scanf("%d", &n);
+
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("Banyaknya data : [   ]");
+    gotoxy(PosisiX+19, 10); getnum(&n, 1);
 
     inputProduk1(n);
     system("cls");
@@ -281,15 +288,22 @@ void menuAddProduk() {
 }
 
 void menuReadProduk() {
+    cleanKanan();
+    int PosisiX = 135;
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
     SetColor(text2);
-    gotoxy(115, 2); printf("   %-35s", man);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(120, 35); printf("Press ENTER to next...");
+    gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataProduk2();
     getch();
+    /* BUAT LIAT DETAIL JIKA DI PERLUKAN */
+    /*if (lihatDetil() == 1) {
+        readdataProduk2();
+    }*/
     system("cls");
     frame();
 }
@@ -336,8 +350,9 @@ void menuDeleteProduk() {
 
 // CRUD Menu
 void crudProduk() {
-    int PosisiX = 120; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
@@ -351,20 +366,20 @@ void crudProduk() {
 
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
         SetColor(text2);
-        gotoxy(115, 3); printf("   %-35s", man);
-        gotoxy(115, 41); printf("%38c", space);
-        SetColor(colorMainText);
 
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Tambah Data Produk"); break;
                 case 2: printf("Lihat Data Produk"); break;

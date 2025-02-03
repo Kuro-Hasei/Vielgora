@@ -180,7 +180,7 @@ void menukasir() {
             }
         } else if (key == 13) { // Tombol Enter
             switch (menu) {
-                case 1: CrudTransaksiPenjualan();
+                case 1: TransaksiPenjualan();
                     break;
                 case 2: CrudTransaksiPembelian();
                     break;

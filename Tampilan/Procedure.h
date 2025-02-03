@@ -23,13 +23,13 @@
 #define STATIC_NUMB_LOGIN 62
 
 int lihatDetil() {
-    SetColorBlock(3,7);
+    SetColor(colorMainText);
     for (int j = 15; j < 25; j++) {
         for (int i = 50; i < 105; i++) {
             printASCII(244, i, j);
         }
     }
-    SetColor(7);
+    SetColor(text2);
     for (int i = 50; i < 105; i++) { // garis H atas
         printASCII(205, i, 15);
     }
@@ -54,12 +54,11 @@ int lihatDetil() {
     while (1) {
         for (int i = 1; i <= banyakMenu; i++) {
             if (i == pil) {
-                SetColorBlock(3,7);
+                SetColor(colorScText);
                 printASCII(174, row -32, 21 + (i - 1) * 2);
                 printASCII(174, row -31, 21 + (i - 1) * 2);
                 printASCII(174, row -30, 21 + (i - 1) * 2);
             } else {
-                SetColorBlock(3,7);
                 gotoxy(row -32, 21 + (i - 1) * 2);
                 printf("   ");
             }
@@ -84,13 +83,13 @@ int lihatDetil() {
 }
 
 int deleteData() {
-    SetColorBlock(3,7);
+    SetColor(colorMainText);
     for (int j = 15; j < 25; j++) {
         for (int i = 50; i < 105; i++) {
             printASCII(244, i, j);
         }
     }
-    SetColorBlock(3,7);
+    SetColor(text2);
     for (int i = 50; i < 105; i++) { // garis H atas
         printASCII(205, i, 15);
     }
@@ -116,12 +115,11 @@ int deleteData() {
     while (1) {
         for (int i = 1; i <= banyakMenu; i++) {
             if (i == pil) {
-                SetColorBlock(3,7);
+                SetColor(colorScText);
                 printASCII(174, row -32, 21 + (i - 1) * 2);
                 printASCII(174, row -31, 21 + (i - 1) * 2);
                 printASCII(174, row -30, 21 + (i - 1) * 2);
             } else {
-                SetColorBlock(3,7);
                 gotoxy(row -32, 21 + (i - 1) * 2);
                 printf("   ");
             }
@@ -149,13 +147,13 @@ int deleteData() {
 int doaction(char text[]) {
     //    cleanKiri();
     //    templateUI2();
-    SetColorBlock(4,7);
+    SetColor(colorMainText);
     for (int j = 15; j < 25; j++) {
         for (int i = 50; i < 105; i++) {
             printASCII(244, i, j);
         }
     }
-    SetColorBlock(2,7);
+    SetColor(text2);
     for (int i = 50; i < 105; i++) { // garis H atas
         printASCII(205, i, 15);
     }
@@ -180,12 +178,11 @@ int doaction(char text[]) {
     while (1) {
         for (int i = 1; i <= banyakMenu; i++) {
             if (i == pil) {
-                SetColorBlock(3,7);
+                SetColor(colorScText);
                 printASCII(174, 82, 21 + (i - 1) * 2);
                 printASCII(174, 83, 21 + (i - 1) * 2);
                 printASCII(174, 84, 21 + (i - 1) * 2);
             } else {
-                SetColorBlock(3,7);
                 gotoxy(82, 21 + (i - 1) * 2);
                 printf("   ");
             }

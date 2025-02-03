@@ -64,8 +64,8 @@ void fullscreen() {
 void cleanKanan() {
     char space = ' ';
     for (int i = 1; i <= 41; i++) {
-        gotoxy(131, i);
-        printf("%-42c", space);
+        gotoxy(126, i);
+        printf("%-48c", space);
     }
 }
 
@@ -73,7 +73,7 @@ void cleanKiri() {
     char space = ' ';
     for (int i = 1; i < 41; i++) {
         gotoxy(1, i);
-        printf("%-129c", space);
+        printf("%-124c", space);
     }
 }
 
@@ -144,7 +144,7 @@ void frame() {
 }
 
 void templateUI() {
-    SetColorBlock(3,7);
+    SetColor(colorMainText);
 
     printASCII(200, 0,maxHeight);
     printASCII(201, 0,0);

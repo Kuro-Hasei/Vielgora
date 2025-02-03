@@ -319,7 +319,7 @@ void readdataMemberINJS() {
 
     printTable(3, 110, 1, 42);
     gotoxy(0, 3);
-    SetColorBlock(3, 7);
+    SetColor(colorScText);
     gotoxy(3, 2);
     printf(" %-8s   %-25s   %-20s \n", id, nama, status);
 
@@ -344,19 +344,19 @@ void readdataMemberINJS() {
 void readDetailMember() {
     int batasKiri = 3;
     char idMmbr[10];
-    system("cls");
-    retype:
+    cleanKanan();
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", "W E L C O M E  A D M I N");
-    gotoxy(115, 41); printf("%38c", ' ');
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(124, 11); printf("Masukkan ID Member");
-    gotoxy(129, 15); printf("[        ]");
+    retype:
+    SetColor(colorHeadText);
+    gotoxy(130, 2); printf("   %-35s", "W E L C O M E  A D M I N");
+    gotoxy(130, 41); printf("%38c", ' ');
+    SetColor(text2);
+    gotoxy(135, 13); printf("Masukkan ID Member");
+    gotoxy(135, 15); printf("[        ]");
 
     readdataMemberINJS();
-    frame();
 
-    gotoxy(131, 15); getteks(idMmbr, 4);
+    gotoxy(137, 15); getteks(idMmbr, 4);
     cleanKiri();
 
     int i = 1;

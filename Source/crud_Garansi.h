@@ -178,7 +178,7 @@ void inputGaransi(int n) {
     templateUI();
     cleanKiri();
 
-    char kodeGaransi[] = {"GRNS"};
+    char kodeGaransi[] = {"GRS"};
     int idTerakhir = 0;
     int batasKiri = 3;
 
@@ -221,7 +221,7 @@ void inputGaransi(int n) {
 
         gotoxy(55, 8); getteks(garansi.jenisGrns, 50);
 
-        gotoxy(55, 11); getteks(garansi.durasi, 50);
+        gotoxy(55, 11); getnum(&garansi.durasi, 1);
 
         gotoxy(55, 14); getteks(garansi.ketentuan, 50);
 
@@ -258,7 +258,7 @@ void readdataGaransiINJS() {
 
     while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
         gotoxy(3, yTeks);
-        printf(" %-8s   %-20s   %-15s  %15s  %-10s\n", garansi.idGrns, garansi.jenisGrns, garansi.durasi, garansi.ketentuan,  garansi.status);
+        printf(" %-8s   %-20s   %-15d  %15s  %-10s\n", garansi.idGrns, garansi.jenisGrns, garansi.durasi, garansi.ketentuan,  garansi.status);
 
         if (i % 40 == 0) {
             printf("\n--- Press any key to continue ---\n");
@@ -266,7 +266,7 @@ void readdataGaransiINJS() {
             cleanKiri();
             yTeks = 4; // Reset yTeks after clearing screen
             gotoxy(3, 2);
-            printf(" %-8s   %-20s   %-15s  %15s  %-10s\n", garansi.idGrns, garansi.jenisGrns, garansi.durasi, garansi.ketentuan,  garansi.status);
+            printf(" %-8s   %-20s   %-15d  %15s  %-10s\n", garansi.idGrns, garansi.jenisGrns, garansi.durasi, garansi.ketentuan,  garansi.status);
         }
         i++;
         yTeks++;
