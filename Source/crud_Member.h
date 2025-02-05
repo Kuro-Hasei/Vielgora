@@ -7,231 +7,6 @@
 #include "Deklarasi.h"
 #include "../Tampilan/Tampilan.h"
 
-/*void inputMember();
-void viewMember();
-void changeMember();
-void deleteMember();
-void crudMember();*/
-
-/*void inputMember() {
-    cleanKiri();
-    SetColorBlock(1,7);
-    fileMember = fopen(FILE_NAME, "ab");
-    if (fileMember == NULL) {
-        printf("Gagal membuka file untuk menambahkan data Member.\n");
-        return;
-    }
-    gotoxy(3,3); printf("Masukkan ID Member: "); scanf("%s", &member.id_Member);
-    gotoxy(3,4); printf("Masukkan Nama Member: "); getteks(member.nama,50); // Membaca string dengan spasi
-    gotoxy(3,5); printf("Masukkan Tanggal Lahir (YYYY-MM-DD):"); getDate(member.tglLhr);
-    gotoxy(3,6); printf("Masukkan Alamat: "); getteks(member.alamat,50);
-    gotoxy(3,7); printf("Status:"); printf("Aktif");
-
-    member.status = 1;
-
-
-    fwrite(&member, sizeof(member), 1, fileMember); // Tambahkan data ke file
-    fclose(fileMember);
-    printf("Data member berhasil ditambahkan!\n");
-}
-
-// Lihat Data Karyawan
-void viewMember() {
-    system("cls");
-    templateUI();
-    cleanKanan();
-
-    // Awal lokasi tabel
-    int startX = 3;   // Posisi awal kolom
-    int startY = 3;   // Posisi awal baris
-    int currentY = startY; // Posisi baris saat ini
-    SetColorBlock(1,7);
-
-    // Header tabel
-    gotoxy(startX, currentY);
-    printf("+----+------------------+------------+----------------------+--------------------+------------------+----------------+---------+");
-    currentY++;
-    gotoxy(startX, currentY);
-    printf("| ID Member | Nama Member        | Tgl Lahir   | Alamat          | Status  |");
-    currentY++;
-    gotoxy(startX, currentY);
-    printf("+----+------------------+------------+----------------------+--------------------+------------------+----------------+---------+");
-    currentY++;
-
-    // Membaca data dari file
-    FILE *file = fopen(FILE_NAME, "rb"); // Buka dengan mode baca biner
-    if (file == NULL) {
-        gotoxy(startX, currentY);
-        printf("Gagal membuka file untuk membaca data Member. File mungkin belum ada.");
-        return;
-    }
-
-    // Iterasi data dalam file
-    while (fread(&member, sizeof(member), 1, file) == 1) {
-        gotoxy(startX, currentY);
-        printf("| %-9s | %-18s | %-11s | %-16s| %-6s  |",
-               member.id_Member,
-               member.nama,
-               member.tglLhr,
-               member.alamat,
-               member.status == 1 ? "Aktif" : "Nonaktif");
-        currentY++;
-    }
-
-    // Baris akhir tabel
-    gotoxy(startX, currentY);
-    printf("+----+------------------+------------+----------------------+--------------------+------------------+----------------+---------+");
-    currentY++;
-
-    // Tunggu sebelum keluar
-    gotoxy(startX, currentY);
-    printf("Tekan tombol apa saja untuk kembali...");
-    getchar(); // Menunggu input
-    getchar();
-
-    fclose(file);
-}
-
-void changeMember() {
-    system("cls");
-    frame();
-    cleanKiri();
-    gotoxy(3,2);
-
-    fileMember = fopen(FILE_NAME, "rb+"); // Buka dengan mode baca-tulis biner
-    if (fileMember == NULL) {
-        printf("Gagal membuka file untuk mengubah data.\n");
-        return;
-    }
-
-    char id[10], found = 0;
-    printf("Masukkan ID Member yang ingin diubah: ");
-    scanf("%s", &id);
-
-    while (fread(&member, sizeof(member), 1, fileMember) == 1) {
-        if (strcpy(member.id_Member, id)) {
-            found = 1;
-            gotoxy(3,3);printf("Data lama akan diubah.\n");
-            gotoxy(3,4);printf("Masukkan Nama baru: "); scanf(" %[^\n]", member.nama);
-            gotoxy(3,5);printf("Masukkan Tanggal Lahir baru (YYYY-MM-DD): "); getDate(member.tglLhr);
-            gotoxy(3,8);printf("Masukkan Alamat baru: "); scanf(" %[^\n]", member.alamat);
-            gotoxy(3,10);printf("Masukkan Status baru (1 untuk Aktif, 0 untuk Nonaktif): "); scanf("%d", &member.status);
-
-            fseek(fileMember, -sizeof(DTMember), SEEK_CUR);
-            fwrite(&member, sizeof(DTMember), 1, fileMember);
-            printf("Data Member berhasil diubah!\n");
-            break;
-        }
-    }
-
-    if (!found) {
-        printf("ID Member tidak ditemukan.\n");
-    }
-    fclose(fileMember);
-}
-
-void deleteMember() {
-    system("cls");
-    frame();
-    gotoxy(3,3);
-
-    fileMember = fopen(FILE_NAME, "rb");
-    if (fileMember == NULL) {
-        printf("Gagal membuka file untuk menghapus data.\n");
-        return;
-    }
-
-    tempMember = fopen("Temp.dat", "wb");
-    if (tempMember == NULL) {
-        printf("Gagal membuat file sementara.\n");
-        fclose(fileMember);
-        return;
-    }
-
-    char id[10], found = 0;
-    printf("Masukkan ID Member yang ingin dihapus: ");
-    scanf("%s", &id);
-
-    while (fread(&member, sizeof(member), 1, fileMember) == 1) {
-        if (strcpy(member.id_Member, id)) {
-            found = 1;
-        } else {
-            fwrite(&member, sizeof(member), 1, tempMember);
-        }
-    }
-
-    fclose(fileMember);
-    fclose(tempMember);
-
-    if (found) {
-        remove(FILE_NAME);
-        rename("Temp.dat", FILE_NAME);
-        printf("Data Member berhasil dihapus.\n");
-    } else {
-        remove("Temp.dat");
-        printf("ID Member tidak ditemukan.\n");
-    }
-}
-
-void crudMember() {
-    int PosisiX = 115;
-    int PosisiY = 10;
-
-    int menu = 1;
-    int totalMenu = 5;
-    int key;
-
-    do {
-        system("cls");
-        frame();
-
-
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
-        for (int i = 1; i <= totalMenu; i++) {
-            if (i == menu) {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<");
-            } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("  ");
-            }
-
-            // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
-            switch (i) {
-                case 1: printf("Tambah Data Member"); break;
-                case 2: printf("Lihat Data Member"); break;
-                case 3: printf("Ubah Data Member"); break;
-                case 4: printf("Hapus Data Member"); break;
-                case 5: printf("EXIT PROGRAM"); break;
-            }
-        }
-
-
-        key = getch();
-        if (key == 224) {
-            key = getch();
-            if (key == 72 && menu > 1) {
-                menu--;
-            } else if (key == 80 && menu < totalMenu) {
-                menu++;
-            }
-        } else if (key == 13) {
-            switch (menu) {
-                case 1: inputMember(); break;
-                case 2: viewMember(); break;
-                case 3: changeMember(); break;
-                case 4: deleteMember(); break;
-                case 5:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
-                    printf("Program Terminated.\n");
-                    return;
-                default:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
-                    printf("Input tidak valid. Silakan coba lagi.\n");
-            }
-        }
-    } while (1);
-}*/
-
 void inputMember(int n) {
     system("cls");
     templateUI();
@@ -239,7 +14,7 @@ void inputMember(int n) {
 
     char kodeMember[] = {"MBR"};
     int idTerakhir = 0;
-    int batasKiri = 3;
+    int batasKiri = 5;
 
     fileMember = fopen("../Database/dat/Member.dat", "ab+");
     if (fileMember == NULL) {
@@ -252,7 +27,7 @@ void inputMember(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(member.id_Member, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
+    gotoxy(batasKiri, 2); SetColor(colorMainText);
 
     // Looping pembuatan id cabang
     for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
@@ -260,9 +35,9 @@ void inputMember(int n) {
         snprintf(member.id_Member, sizeof(member.id_Member), "%s%i", kodeMember, i);
 
         // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
+        SetColor(colorMainText);
         gotoxy(batasKiri, 3); printf("=MASUKKAN DATA Member===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Member");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", member.id_Member);
 
@@ -278,21 +53,16 @@ void inputMember(int n) {
         gotoxy(batasKiri, 17); printf("No Telepon");
         gotoxy(batasKiri+50, 17); printf("| %-40s|", " ");
 
-        gotoxy(batasKiri, 20); printf("Riwayat Pembelian");
-        gotoxy(batasKiri+50, 20); printf("| %-40s|", " ");
+        gotoxy(batasKiri, 20); printf("Status");
+        gotoxy(batasKiri+50, 20); printf("| %-40s|", "Aktif ");
 
-        gotoxy(batasKiri, 23); printf("Status");
-        gotoxy(batasKiri+50, 23); printf("| %-40s|", "Aktif ");
+        gotoxy(57, 8); getteks(member.nama, 50);
 
-        gotoxy(55, 8); getteks(member.nama, 50);
+        gotoxy(57, 11); getDate(member.tglLhr);
 
-        gotoxy(55, 11); getDate(member.tglLhr);
+        gotoxy(57, 14); getteks(member.alamat, 15);
 
-        gotoxy(55, 14); getteks(member.alamat, 15);
-
-        gotoxy(55, 17); getno(member.noTelp, 13);
-
-        gotoxy(55, 20); getteks(member.RP, 20);
+        gotoxy(57, 17); getno(member.noTelp, 13);
 
         strcpy(member.status, "Aktif");
 
@@ -309,7 +79,7 @@ void readdataMemberINJS() {
     char status[] = "STATUS";
 
     int i = 1;
-    int yTeks = 4;
+    int yTeks = 6;
 
     fileMember = fopen("../Database/dat/Member.dat", "rb");
     if (fileMember == NULL) {
@@ -317,23 +87,16 @@ void readdataMemberINJS() {
         return;
     }
 
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColor(colorScText);
-    gotoxy(3, 2);
-    printf(" %-8s   %-25s   %-20s \n", id, nama, status);
-
     while (fread(&member, sizeof(member), 1, fileMember) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-8s   %-25s   %-20s \n", member.id_Member, member.nama,member.status);
+        printTable(30, 90, 3, 38);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(30, 4); printf(" %-8s   %-25s   %-20s \n", id, nama, status);
+        gotoxy(30, yTeks);printf(" %-8s   %-25s   %-20s \n", member.id_Member, member.nama,member.status);
 
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
-            getchar(); // Wait for user input
+        if (i % 35 == 0) {
+            getchar();
             cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-8s   %-25s   %-20s \n", member.id_Member, member.nama,member.status);
+            yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
         }
         i++;
         yTeks++;
@@ -342,7 +105,7 @@ void readdataMemberINJS() {
 }
 
 void readDetailMember() {
-    int batasKiri = 3;
+    int batasKiri = 5;
     char idMmbr[10];
     cleanKanan();
 
@@ -390,17 +153,13 @@ void readDetailMember() {
         gotoxy(batasKiri, 17); printf("No Telepon");
         gotoxy(batasKiri+50, 17); printf("| %-40s|", member.noTelp);
 
-        gotoxy(batasKiri, 20); printf("Riwayat Pembelian");
-        gotoxy(batasKiri+50, 20); printf("| %-40s|", member.RP);
-
-        gotoxy(batasKiri, 23); printf("Status");
-        gotoxy(batasKiri+50, 23); printf("| %-40s|", member.status);
+        gotoxy(batasKiri, 20); printf("Status");
+        gotoxy(batasKiri+50, 20); printf("| %-40s|", member.status);
     } else {
         showMessage("ALERT!", "ID Member tidak ditemukan");
-        gotoxy(131, 15); printf("       ");
         goto retype;
     }
-    gotoxy(123, 30); printf("Press ENTER to back...");
+    gotoxy(135, 30); printf("Press ENTER to back...");
     getchar();
     //Menutup file setelah membaca
     fclose(fileMember);
@@ -415,9 +174,9 @@ void updateMember() {
 
     retype:
     cleanKanan();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Member : [      ]");
-    gotoxy(115+27, 10); getteks(No, 4);
+    gotoxy(135, 5); SetColor(text2);
+    gotoxy(135, 10); printf("ID Member : [      ]");
+    gotoxy(149, 10); getteks(No, 4);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -439,6 +198,7 @@ void updateMember() {
     //Proses lanjutan setelah data ditemukan
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("ID Member");
         gotoxy(batasKiri+50, 3); printf("| %-40s|", member.id_Member);
 
@@ -454,16 +214,13 @@ void updateMember() {
         gotoxy(batasKiri, 7); printf("No Telepon");
         gotoxy(batasKiri+50, 7); printf("| %-40s|", member.noTelp);
 
-        gotoxy(batasKiri, 8); printf("Riwayat Pembelian");
-        gotoxy(batasKiri+50, 8); printf("| %-40s|", member.RP);
-
-        gotoxy(batasKiri, 9); printf("Status");
-        gotoxy(batasKiri+50, 9); printf("| %-40s|", member.status);
+        gotoxy(batasKiri, 8); printf("Status");
+        gotoxy(batasKiri+50, 8); printf("| %-40s|", member.status);
 
         // MENAMPILKAN TEKS UNTUK INPUT
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 13); printf("=MASUKKAN DATA YANG BARU===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Member");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", member.id_Member);
 
@@ -479,11 +236,8 @@ void updateMember() {
         gotoxy(batasKiri, 23); printf("No Telepon");
         gotoxy(batasKiri+50, 23); printf("| %-40s|", " ");
 
-        gotoxy(batasKiri, 25); printf("Riwayat Pembelian");
+        gotoxy(batasKiri, 25); printf("Status");
         gotoxy(batasKiri+50, 25); printf("| %-40s|", " ");
-
-        gotoxy(batasKiri, 27); printf("Status");
-        gotoxy(batasKiri+50, 27); printf("| %-40s|", " ");
 
         char namTemp[50];
         gotoxy(57, 17); getteks(namTemp, 50);
@@ -494,18 +248,14 @@ void updateMember() {
         char alamatTemp[35];
         gotoxy(57, 21); getteks(alamatTemp, 35);
 
-
         char tlpTemp[15];
         gotoxy(57, 23); getno(tlpTemp, 13);
 
-        char RpTemp[35];
-        gotoxy(57, 25); getteks(RpTemp, 35);
-
         char statusTemp[10];
-        gotoxy(57, 29); getteks(statusTemp, 10);
+        /*gotoxy(57, 29); getteks(statusTemp, 10);*/
         int validStatus = 0;
         while (!validStatus) {
-            gotoxy(57, 27); getteks(statusTemp, 1);
+            gotoxy(57, 25); getteks(statusTemp, 1);
 
             // Cek apakah Gender valid
             for (int j = 0; j < jumlahGender; j++) {
@@ -518,17 +268,15 @@ void updateMember() {
 
             if (!validStatus) {
                 showMessage("ATTENTION", "Status tidak valid.");
-                gotoxy(57, 29); printf("%s", " ");
             }
         }
 
         if (doaction("UBAH DATA") == 1) {
             strcpy(member.id_Member, No);
             strcpy(member.nama, namTemp);
-            strcpy(member.tglLhr, tglTemp);
+            strcpy(member.tglLhr, alamatTemp);
             strcpy(member.alamat, alamatTemp);
             strcpy(member.noTelp, tlpTemp);
-            strcpy(member.RP, RpTemp);
             strcpy(member.status, statusTemp);
             fwrite(&member, sizeof(member), 1, tempMember);
             while (fread(&member, sizeof(member), 1, fileMember) == 1) {
@@ -542,7 +290,6 @@ void updateMember() {
         }
     } else {
         showMessage("ALERT!", "ID Member tidak ditemukan");
-        gotoxy(115+27, 10); printf("%s", "    ");
         goto retype;
     }
     fclose(fileMember);
@@ -552,16 +299,21 @@ void updateMember() {
 void deleteDataMember() {
     int found;
     found = 0;
-    char No[10];
+    char idMember[10];
     int batasKiri = 5;
+    int PosisiX = 135;
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     retype:
-    cleanKiri();
     cleanKanan();
     readdataMemberINJS();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Member : [      ]");
-    gotoxy(115+27, 10); getteks(No, 4);
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("ID Produk : [      ]");
+    gotoxy(PosisiX+14, 10); getteks(idMember, 4);
 
     //Membuka file asli dengan mode rb
     fileMember = fopen("../Database/dat/Member.dat", "rb");
@@ -570,7 +322,7 @@ void deleteDataMember() {
     //Pencarian data dalam file menggunakan loopung
     while (fread(&member, sizeof(member), 1, fileMember) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(No, member.id_Member) == 0) {
+        if (strcmp(idMember, member.id_Member) == 0) {
             cleanKiri();
             gotoxy(batasKiri, 5); printf("ID member");
             gotoxy(batasKiri+50, 5); printf("| %-40s|", member.id_Member);
@@ -587,11 +339,8 @@ void deleteDataMember() {
             gotoxy(batasKiri, 17); printf("No Telepon");
             gotoxy(batasKiri+50, 17); printf("| %-40s|", member.noTelp);
 
-            gotoxy(batasKiri, 17); printf("Riwayat Pembelian");
-            gotoxy(batasKiri+50, 20); printf("| %-40s|", member.RP);
-
             gotoxy(batasKiri, 20); printf("Status");
-            gotoxy(batasKiri+50, 23); printf("| %-40s|", member.status);
+            gotoxy(batasKiri+50, 20); printf("| %-40s|", member.status);
             getchar();
             getchar();
             if (deleteData() == 1) {
@@ -610,8 +359,7 @@ void deleteDataMember() {
     }
     if (found == 0) {
         showMessage("ALERT!", "ID Member tidak ditemukan");
-        gotoxy(115+27, 10); printf("%s", "    ");
-        goto retype;
+        return;
     }
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileMember);
@@ -619,34 +367,43 @@ void deleteDataMember() {
 }
 
 void MenuAddMember() {
-    system("cls");
-    frame();
+    cleanKanan();
+    int PosisiX = 135;
 
     int n;
-    char Admin[] = "W E L C O M E  A D M I N";
+    char man[] = "W E L C O M E  A D M I N";
     char space = " ";
-    gotoxy(115, 2); SetColorBlock(3,7);printf(" %-35s", Admin);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-    gotoxy(115+27, 10); scanf("%d", &n);
+
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("Banyaknya data : [   ]");
+    gotoxy(PosisiX+19, 10); getnum(&n, 1);
 
     inputMember(n);
+    system("cls");
+    frame();
 }
 
 void menuReadMember() {
+    cleanKanan();
+    int PosisiX = 135;
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", man);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(123, 35); printf("Press ENTER to next...");
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataMemberINJS();
     getch();
     if (lihatDetil() == 1) {
         readDetailMember();
     }
+    system("cls");
+    frame();
 }
 
 void menuUpdateMember() {
@@ -664,6 +421,8 @@ void menuUpdateMember() {
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileMember);
     fclose(tempMember);
+    system("cls");
+    frame();
 }
 
 void menuDeleteMember() {
@@ -681,31 +440,40 @@ void menuDeleteMember() {
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileMember);
     fclose(tempMember);
+    system("cls");
+    frame();
 }
 
 void crudMember() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
 
-    do {
-        system("cls");
-        frame();
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
+    system("cls");
+    frame();
+
+    do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("  ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Tambah Data Member"); break;
                 case 2: printf("Lihat Data Member"); break;
@@ -728,21 +496,20 @@ void crudMember() {
         } else if (key == 13) { // Tombol Enter
             switch (menu) {
                 case 1:
-                    cleanKanan();
                     MenuAddMember();
                     break;
                 case 2:
                     menuReadMember();
                     break;
                 case 3:
-                    cleanKanan();
                     menuUpdateMember();
                     break;
                 case 4:
                     menuDeleteMember();
                     break;
                 case 5:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
+                    system("cls");
+                    frame();
                     return;
                 default:
                     gotoxy(PosisiX, PosisiY + totalMenu + 2);

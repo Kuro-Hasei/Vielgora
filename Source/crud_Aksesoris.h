@@ -7,11 +7,10 @@
 void inputAksesoris1(int n) {
     system("cls");
     templateUI();
-    cleanKiri();
 
     char kodeAksesoris[] = {"AKS"};
     int idTerakhir = 0;
-    int batasKiri = 3;
+    int batasKiri = 5;
 
     fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "ab+");
     if (fileAksessoris == NULL) {
@@ -24,7 +23,7 @@ void inputAksesoris1(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(aksessoris.idAks, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
+    gotoxy(batasKiri, 2); SetColor(colorMainText);
 
     // Looping pembuatan id cabang
     for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
@@ -33,9 +32,9 @@ void inputAksesoris1(int n) {
         snprintf(aksessoris.idAks, sizeof(aksessoris.idAks), "%s%i", kodeAksesoris, i);
 
         // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA PRODUK ] ===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Aksesoris");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", aksessoris.idAks);
 
@@ -48,16 +47,16 @@ void inputAksesoris1(int n) {
         gotoxy(batasKiri, 14); printf("Harga Aksesoris");
         gotoxy(batasKiri+50, 14); printf("| RP.  %-35s|", " ");
 
-        gotoxy(batasKiri, 17); printf("status Aksesoris");
-        gotoxy(batasKiri+50, 17); printf("| %-40s|", "Tersedia");
+        gotoxy(batasKiri, 17); printf("Jumlah Aksesoris");
+        gotoxy(batasKiri+50, 17); printf("| %-40s|", " ");
 
-        gotoxy(55, 8); getteks(aksessoris.jenisAks, 15);
+        gotoxy(57, 8); getteks(aksessoris.jenisAks, 15);
 
-        gotoxy(55, 11); getteks(aksessoris.namaAks, 50);
+        gotoxy(57, 11); getteks(aksessoris.namaAks, 50);
 
-        gotoxy(59, 14); getnum(&aksessoris.harga, 9);
+        getRp(&aksessoris.harga, 5, 9, 61, 14);
 
-        strcpy(aksessoris.status, "Tersedia");
+        gotoxy(57, 17); getnum(&aksessoris.quantity, 2);
 
         fwrite(&aksessoris, sizeof(aksessoris), 1, fileAksessoris);
     }
@@ -71,10 +70,10 @@ void readdataAksesoris2() {
     char jenis[] = "JENIS";
     char nama[] = "NAMA";
     char harga[] = "HARGA";
-    char status[] = "STATUS";
+    char qt[] = "QUANTITY";
 
     int i = 1;
-    int yTeks = 4;
+    int yTeks = 6;
 
     fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
     if (fileAksessoris == NULL) {
@@ -82,23 +81,17 @@ void readdataAksesoris2() {
         return;
     }
 
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColorBlock(3, 7);
-    gotoxy(3, 2);
-    printf(" %-8s   %-15s   %-30s   %-22s   %-10s\n", id, jenis, nama, harga, status);
-
     while (fread(&aksessoris, sizeof(aksessoris), 1, fileAksessoris) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-8s   %-15s   %-30s   RP. %-18d   %-10s\n", aksessoris.idAks, aksessoris.jenisAks, aksessoris.namaAks, aksessoris.harga, aksessoris.status);
-
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
-            getchar(); // Wait for user input
+        printTable(10, 110, 3, 38);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(10, 4);printf(" %-8s   %-15s   %-30s   %-22s   %-10s\n", id, jenis, nama, harga, qt);
+        char hargaAks[20];
+        rupiah(aksessoris.harga, hargaAks);
+        gotoxy(10, yTeks);printf(" %-8s   %-15s   %-30s   RP. %-18s   %-10d\n", aksessoris.idAks, aksessoris.jenisAks, aksessoris.namaAks, hargaAks, aksessoris.quantity);
+        if (i % 35 == 0) {
+            getchar();
             cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-8s   %-15s   %-30s   %-22s   %-10s\n", id, jenis, nama, harga, status);
+            yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
         }
         i++;
         yTeks++;
@@ -115,9 +108,9 @@ void updateAksesoris() {
     retype:
     cleanKanan();
     readdataAksesoris2();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Aksesoris : [      ]");
-    gotoxy(115+25, 10); getteks(idAksesoris, 4);
+    gotoxy(135, 5); SetColor(text2);
+    gotoxy(135, 10); printf("ID Aksessoris : [      ]");
+    gotoxy(153, 10); getteks(idAksesoris, 4);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -135,10 +128,13 @@ void updateAksesoris() {
             fwrite(&aksessoris, sizeof(aksessoris), 1, tempAksessoris);
         }
     }
+    char hargaAks[20];
+    rupiah(aksessoris.harga, hargaAks);
 
     //Proses lanjutan setelah data ditemukan
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("ID Aksesoris");
         gotoxy(batasKiri+50, 3); printf("| %-40s|", aksessoris.idAks);
 
@@ -149,15 +145,15 @@ void updateAksesoris() {
         gotoxy(batasKiri+50, 5); printf("| %-40s|", aksessoris.namaAks);
 
         gotoxy(batasKiri, 6); printf("Harga Aksesoris");
-        gotoxy(batasKiri+50, 6); printf("| RP. %-36d|", aksessoris.harga);
+        gotoxy(batasKiri+50, 6); printf("| RP. %-36s|", hargaAks);
 
-        gotoxy(batasKiri, 7); printf("Status Aksesoris");
-        gotoxy(batasKiri+50, 7); printf("| %-40s|", aksessoris.status);
+        gotoxy(batasKiri, 7); printf("Jumlah Aksesoris");
+        gotoxy(batasKiri+50, 7); printf("| %-40d|", aksessoris.quantity);
 
         // MENAMPILKAN TEKS UNTUK INPUT
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Aksesoris");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", aksessoris.idAks);
 
@@ -170,19 +166,19 @@ void updateAksesoris() {
         gotoxy(batasKiri, 21); printf("Harga Aksesoris");
         gotoxy(batasKiri+50, 21); printf("| RP. %-36s|", " ");
 
-        gotoxy(batasKiri, 23); printf("Stats Aksesoris");
+        gotoxy(batasKiri, 23); printf("Jumlah Aksesoris");
         gotoxy(batasKiri+50, 23); printf("| %-40s|", " ");
 
         int hargaTemp;
-        gotoxy(61, 21); getnum(&hargaTemp, 9);
+        getRp(&hargaTemp, 5, 9, 61, 21);
 
-        char statusTemp[15];
-        gotoxy(57, 23); getteks(statusTemp, 15);
+        int qt;
+        gotoxy(57, 23); getnum(&qt, 2);
 
         if (doaction("UBAH DATA") == 1) {
             strcpy(aksessoris.idAks, idAksesoris);
             aksessoris.harga = hargaTemp;
-            strcpy(aksessoris.status, statusTemp);
+            aksessoris.quantity = qt;
 
             fwrite(&aksessoris, sizeof(aksessoris), 1, tempAksessoris);
             while (fread(&aksessoris, sizeof(aksessoris), 1, fileAksessoris) == 1) {
@@ -196,7 +192,6 @@ void updateAksesoris() {
         }
     } else {
         showMessage("ALERT!", "ID Aksesoris tidak ditemukan");
-        gotoxy(115+25, 10); printf("%s", "    ");
         goto retype;
     }
     fclose(fileAksessoris);
@@ -208,13 +203,22 @@ void deleteDataAksessoris() {
     found = 0;
     char idAksesoris[10];
     int batasKiri = 5;
+    int PosisiX = 135;
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     retype:
     cleanKanan();
     readdataAksesoris2();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Aksesoris : [      ]");
-    gotoxy(115+26, 10); getteks(idAksesoris, 4);
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("ID Aksessoris : [      ]");
+    gotoxy(PosisiX+18, 10); getteks(idAksesoris, 4);
+
+    char hargaAks[20];
+    rupiah(aksessoris.harga, hargaAks);
 
     //Membuka file asli dengan mode rb
     fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
@@ -235,10 +239,10 @@ void deleteDataAksessoris() {
             gotoxy(batasKiri+50, 11); printf("| %-40s|", aksessoris.namaAks);
 
             gotoxy(batasKiri, 14); printf("Harga Aksesoris");
-            gotoxy(batasKiri+50, 14); printf("| RP. %-36d|", aksessoris.harga);
+            gotoxy(batasKiri+50, 14); printf("| RP. %-36s|", hargaAks);
 
             gotoxy(batasKiri, 17); printf("Status Aksesoris");
-            gotoxy(batasKiri+50, 17); printf("| %-40s|", aksessoris.status);
+            gotoxy(batasKiri+50, 17); printf("| %-40d|", aksessoris.quantity);
             getchar();getchar();
 
             if (deleteData() == 1) {
@@ -257,7 +261,6 @@ void deleteDataAksessoris() {
     }
     if (found == 0) {
         showMessage("ALERT!", "ID Aksesoris tidak ditemukan");
-        gotoxy(115+26, 10); printf("%s", "    ");
         goto retype;
     }
     //Menutup file asli dan file temporary setelah digunakan
@@ -266,17 +269,19 @@ void deleteDataAksessoris() {
 }
 
 void menuAddAksesoris() {
-    system("cls");
-    frame();
+    cleanKanan();
+    int PosisiX = 135;
 
     int n;
-    char Admin[] = "W E L C O M E  A D M I N";
+    char man[] = "W E L C O M E  A D M I N";
     char space = " ";
-    gotoxy(115, 2); SetColorBlock(3,7); printf(" %-35s", Admin);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-    gotoxy(115+27, 10); scanf("%d", &n);
+
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("Banyaknya data : [   ]");
+    gotoxy(PosisiX+19, 10); getnum(&n, 1);
 
     inputAksesoris1(n);
     system("cls");
@@ -284,13 +289,16 @@ void menuAddAksesoris() {
 }
 
 void menuReadAksesoris() {
+    cleanKanan();
+    int PosisiX = 135;
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", man);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(123, 35); printf("Press ENTER to next...");
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataAksesoris2();
     getch();
     /*if (lihatDetil() == 1) {
@@ -342,28 +350,36 @@ void menuDeleteAksesoris() {
 
 // CRUD Menu
 void crudAksesoris() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
+
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     system("cls");
     frame();
 
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
+
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Tambah Data Aksesoris"); break;
                 case 2: printf("Lihat Data Aksesoris"); break;

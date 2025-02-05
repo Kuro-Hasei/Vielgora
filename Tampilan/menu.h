@@ -252,9 +252,15 @@ void menumanager() {
                 case 1:
                     laporanTransaksiPenjualan();
                     break;
-                case 2: break;
-                case 3: break;
-                case 4: break;
+                case 2:
+                    laporanTransaksiPembelian();
+                    break;
+                case 3:
+                    laporanMember();
+                    break;
+                case 4:
+                    laporanGaransi();
+                    break;
                 case 5:
                     gotoxy(PosisiX, PosisiY + totalMenu + 2);
                 printf("Program Terminated.\n");

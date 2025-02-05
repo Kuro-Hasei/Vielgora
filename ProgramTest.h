@@ -1,6 +1,7 @@
 #ifndef PROGRAMTEST_H
 #define PROGRAMTEST_H
 
+/*
 void inputKaryawan(int n) {
     system("cls");
     templateUI();
@@ -86,5 +87,6 @@ void MenuAddKaryawan() {
     system("cls");
     frame();
 }
+*/
 
 #endif //PROGRAMTEST_H

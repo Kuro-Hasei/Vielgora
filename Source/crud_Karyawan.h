@@ -7,11 +7,10 @@
 void inputKaryawan(int n) {
     system("cls");
     templateUI();
-    cleanKiri();
 
     char kodeKaryawan[] = {"KRY"};
     int idTerakhir = 0;
-    int batasKiri = 3;
+    int batasKiri = 5;
 
     fileKaryawan = fopen("../Database/dat/Karyawan.dat", "ab+");
     if (fileKaryawan == NULL) {
@@ -24,7 +23,7 @@ void inputKaryawan(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(karyawan.id, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
+    gotoxy(batasKiri, 2); SetColor(colorMainText);
 
     // Looping pembuatan id cabang
     for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
@@ -33,9 +32,9 @@ void inputKaryawan(int n) {
         snprintf(karyawan.id, sizeof(karyawan.id), "%s%i", kodeKaryawan, i);
 
         // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
-        gotoxy(batasKiri, 3); printf("=MASUKKAN DATA KARYAWAN===========");
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
+        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA KARYAWAN ] ===========");
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Karyawan");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", karyawan.id);
 
@@ -60,14 +59,14 @@ void inputKaryawan(int n) {
         gotoxy(batasKiri, 26); printf("Status");
         gotoxy(batasKiri+50, 26); printf("| %-40s|", "Aktif");
 
-        gotoxy(55, 8); getteks(karyawan.namaKry, 50);
+        gotoxy(57, 8); getteks(karyawan.namaKry, 50);
 
-        gotoxy(55, 11); getDate(karyawan.tglLhr);
+        gotoxy(57, 11); getDate(karyawan.tglLhr);
 
         /*gotoxy(55, 14); getteks(karyawan.jabatan, 10);*/
         int validJabatan = 0;
         while (!validJabatan) {
-            gotoxy(55, 14); getteks(karyawan.jabatan, 3);
+            gotoxy(57, 14); getteks(karyawan.jabatan, 3);
 
             // Cek apakah jabatan valid
             for (int j = 0; j < jumlahJabatan; j++) {
@@ -80,20 +79,17 @@ void inputKaryawan(int n) {
 
             if (!validJabatan) {
                 showMessage("ATTENTION", "Jabatan tidak valid.");
-                gotoxy(55, 14); printf("%s", "   ");
-            } else {
-                gotoxy(batasKiri, 28); printf("%-70s", " "); // Hapus pesan error
             }
         }
 
-        gotoxy(55, 17); getno(karyawan.noTLP, 13);
+        gotoxy(57, 17); getno(karyawan.noTLP, 13);
 
-        gotoxy(55, 20); getteks(karyawan.alamat, 50);
+        gotoxy(57, 20); getteks(karyawan.alamat, 50);
 
-        /*gotoxy(55, 23); getteks(karyawan.gender, 10);*/
+        /*gotoxy(57, 23); getteks(karyawan.gender, 10);*/
         int validGender = 0;
         while (!validGender) {
-            gotoxy(55, 23); getteks(karyawan.gender, 1);
+            gotoxy(57, 23); getteks(karyawan.gender, 1);
 
             // Cek apakah Gender valid
             for (int j = 0; j < jumlahGender; j++) {
@@ -106,9 +102,6 @@ void inputKaryawan(int n) {
 
             if (!validGender) {
                 showMessage("ATTENTION", "Gender tidak valid.");
-                gotoxy(55, 23); printf("%s", " ");
-            } else {
-                gotoxy(batasKiri, 28); printf("%-70s", " "); // Hapus pesan error
             }
         }
 
@@ -128,7 +121,7 @@ void readdataKaryawanINJS() {
     char status[] = "STATUS";
 
     int i = 1;
-    int yTeks = 4;
+    int yTeks = 6;
 
     fileKaryawan = fopen("../Database/dat/Karyawan.dat", "rb");
     if (fileKaryawan == NULL) {
@@ -136,23 +129,16 @@ void readdataKaryawanINJS() {
         return;
     }
 
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColorBlock(3, 7);
-    gotoxy(3, 2);
-    printf(" %-8s   %-20s   %-15s   %-10s\n", id, nama, jab, status);
 
     while (fread(&karyawan, sizeof(karyawan), 1, fileKaryawan) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-8s   %-20s   %-20s   %-15s\n", karyawan.id, karyawan.namaKry, karyawan.jabatan, karyawan.status);
-
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
+        printTable(20, 100, 3, 38);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(20, 4); printf(" %-8s   %-20s   %-20s   %-15s\n", id, nama, jab, status);
+        gotoxy(20, yTeks); printf(" %-8s   %-20s   %-20s   %-15s\n", karyawan.id, karyawan.namaKry, karyawan.jabatan, karyawan.status);
+        if (i % 35 == 0) {
             getchar(); // Wait for user input
             cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-8s   %-20s   %-15s   %-10s\n", id, nama, jab, status);
+            yTeks = 5; // Reset yTeks after clearing screen
         }
         i++;
         yTeks++;
@@ -163,19 +149,20 @@ void readdataKaryawanINJS() {
 void readDetailKaryawan() {
     int batasKiri = 3;
     char idKrywn[10];
-    system("cls");
+    cleanKanan();
+    cleanKiri();
     retype:
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", "W E L C O M E  A D M I N");
-    gotoxy(115, 41); printf("%38c", ' ');
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(124, 11); printf("Masukkan ID Karyawan");
-    gotoxy(129, 15); printf("[        ]");
+    SetColor(colorHeadText);
+    gotoxy(130, 2); printf("   %-35s", "W E L C O M E  A D M I N");
+    gotoxy(130, 41); printf("%38c", ' ');
+    gotoxy(130, 5); SetColor(text2);
+    gotoxy(135, 13); printf("Masukkan ID Karyawan");
+    gotoxy(135, 15); printf("[        ]");
 
     readdataKaryawanINJS();
-    frame();
 
-    gotoxy(131, 15); getteks(idKrywn, 4);
+    gotoxy(137, 15); getteks(idKrywn, 4);
     cleanKiri();
 
     int i = 1;
@@ -183,7 +170,7 @@ void readDetailKaryawan() {
     //Membuka file dengan mode rb
     fileKaryawan = fopen("../Database/dat/Karyawan.dat", "rb");
 
-    gotoxy(0, 3); SetColorBlock(3,7);
+    gotoxy(0, 3); SetColor(colorMainText);
     while (fread(&karyawan, sizeof(karyawan), 1, fileKaryawan) == 1) {
         if (strcmp(idKrywn, karyawan.id) == 0) {
             found = 1;
@@ -194,6 +181,7 @@ void readDetailKaryawan() {
 
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Karyawan");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", karyawan.id);
 
@@ -222,7 +210,7 @@ void readDetailKaryawan() {
         gotoxy(131, 15); printf("       ");
         goto retype;
     }
-    gotoxy(123, 30); printf("Press ENTER to back...");
+    gotoxy(135, 30); printf("Press ENTER to back...");
     getchar();
     //Menutup file setelah membaca
     fclose(fileKaryawan);
@@ -232,15 +220,15 @@ void readDetailKaryawan() {
 void updateKaryawan() {
     int found;
     found = 0;
-    char No[10];
+    char idKaryawan[10];
     int batasKiri = 5;
 
     retype:
     cleanKanan();
     readdataKaryawanINJS();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Karyawan : [      ]");
-    gotoxy(115+27, 10); getteks(No, 4);
+    gotoxy(135, 5); SetColor(text2);
+    gotoxy(135, 10); printf("ID Karyawan : [      ]");
+    gotoxy(151, 10); getteks(idKaryawan, 4);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -251,7 +239,7 @@ void updateKaryawan() {
     //Pencarian data dalam file menggunakan loopung
     while (fread(&karyawan, sizeof(karyawan), 1, fileKaryawan) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(No, karyawan.id) == 0) {
+        if (strcmp(idKaryawan, karyawan.id) == 0) {
             found = 1;
             break;
         } else {
@@ -262,6 +250,7 @@ void updateKaryawan() {
     //Proses lanjutan setelah data ditemukan
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("ID Karyawan");
         gotoxy(batasKiri+50, 3); printf("| %-40s|", karyawan.id);
 
@@ -287,9 +276,9 @@ void updateKaryawan() {
         gotoxy(batasKiri+50, 10); printf("| %-40s|", karyawan.status);
 
         // MENAMPILKAN TEKS UNTUK INPUT
-        SetColorBlock(3,7);
-        gotoxy(batasKiri, 13); printf("=MASUKKAN DATA YANG BARU===========");
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
+        gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
+        SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Karyawan");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", karyawan.id);
 
@@ -336,10 +325,7 @@ void updateKaryawan() {
             }
 
             if (!validJabatan) {
-
-                gotoxy(batasKiri, 35); showMessage("ATTENTION", "Kode jabatan tidak valid!");
-            } else {
-                gotoxy(batasKiri, 35); printf("%-70s", " "); // Hapus pesan error
+                showMessage("ATTENTION", "Kode jabatan tidak valid!");
             }
         }
 
@@ -366,7 +352,6 @@ void updateKaryawan() {
 
             if (!validGender) {
                 showMessage("ATTENTION", "Gender tidak valid.");
-                gotoxy(57, 27); printf("%s", " ");
             }
         }
 
@@ -387,12 +372,11 @@ void updateKaryawan() {
 
             if (!validStatus) {
                 showMessage("ATTENTION", "Status tidak valid.");
-                gotoxy(57, 29); printf("%s", " ");
             }
         }
 
         if (doaction("UBAH DATA") == 1) {
-            strcpy(karyawan.id, No);
+            strcpy(karyawan.id, idKaryawan);
             strcpy(karyawan.namaKry, namTemp);
             strcpy(karyawan.tglLhr, tglTemp);
             strcpy(karyawan.jabatan, jabTemp);
@@ -412,7 +396,6 @@ void updateKaryawan() {
         }
     } else {
         showMessage("ALERT!", "ID Karyawan tidak ditemukan");
-        gotoxy(115+27, 10); printf("%s", "    ");
         goto retype;
     }
     fclose(fileKaryawan);
@@ -422,16 +405,21 @@ void updateKaryawan() {
 void deleteDataKaryawan() {
     int found;
     found = 0;
-    char No[10];
+    char idKaryawan[10];
     int batasKiri = 5;
+    int PosisiX = 135;
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     retype:
-    cleanKiri();
     cleanKanan();
     readdataKaryawanINJS();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Karyawan : [      ]");
-    gotoxy(115+27, 10); getteks(No, 4);
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("ID Produk : [      ]");
+    gotoxy(PosisiX+14, 10); getteks(idKaryawan, 4);
 
     //Membuka file asli dengan mode rb
     fileKaryawan = fopen("../Database/dat/Karyawan.dat", "rb");
@@ -440,8 +428,9 @@ void deleteDataKaryawan() {
     //Pencarian data dalam file menggunakan loopung
     while (fread(&karyawan, sizeof(karyawan), 1, fileKaryawan) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(No, karyawan.id) == 0) {
+        if (strcmp(idKaryawan, karyawan.id) == 0) {
             cleanKiri();
+            SetColor(text2);
             gotoxy(batasKiri, 5); printf("ID Karyawan");
             gotoxy(batasKiri+50, 5); printf("| %-40s|", karyawan.id);
 
@@ -483,7 +472,6 @@ void deleteDataKaryawan() {
     }
     if (found == 0) {
         showMessage("ALERT!", "ID Karyawan tidak ditemukan");
-        gotoxy(115+27, 10); printf("%s", "    ");
         goto retype;
     }
     //Menutup file asli dan file temporary setelah digunakan
@@ -492,17 +480,19 @@ void deleteDataKaryawan() {
 }
 
 void MenuAddKaryawan() {
-    system("cls");
-    frame();
+    cleanKanan();
+    int PosisiX = 135;
 
     int n;
-    char Admin[] = "W E L C O M E  A D M I N";
+    char man[] = "W E L C O M E  A D M I N";
     char space = " ";
-    gotoxy(115, 2); SetColorBlock(3,7); printf(" %-35s", Admin);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-    gotoxy(115+27, 10); scanf("%d", &n);
+
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("Banyaknya data : [   ]");
+    gotoxy(PosisiX+19, 10); getnum(&n,1);
 
     inputKaryawan(n);
     system("cls");
@@ -510,13 +500,16 @@ void MenuAddKaryawan() {
 }
 
 void menuReadKaryawan() {
+    cleanKanan();
+    int PosisiX = 135;
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", man);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(123, 35); printf("Press ENTER to next...");
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataKaryawanINJS();
     getch();
     if (lihatDetil() == 1) {
@@ -568,28 +561,35 @@ void menuDeleteKaryawan() {
 
 // CRUD Menu
 void crudKaryawan() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
+
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     system("cls");
     frame();
 
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Tambah Data Karyawan"); break;
                 case 2: printf("Lihat Data Karyawan"); break;

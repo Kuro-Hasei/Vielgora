@@ -5,7 +5,6 @@ set(CMAKE_C_STANDARD 23)
 
 add_executable(Vielgora TokoVielgora.c
         ProgramTest.h
-        cmake-build-debug/Menu_Admin.h
         Source/crud_Karyawan.h
         Source/Deklarasi.h
         Tampilan/Tampilan.h
@@ -22,5 +21,6 @@ add_executable(Vielgora TokoVielgora.c
         Transaksi/Trsk_Penjualan.h
         Transaksi/Trsk_Member.h
         Transaksi/Trsk_KlaimGaransi.h
-        Laporan/Laporan.h)
+        Laporan/Laporan.h
+        ProgramTemp/TempProgram.h)
 

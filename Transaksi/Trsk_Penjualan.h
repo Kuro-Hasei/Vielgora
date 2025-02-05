@@ -1,9 +1,6 @@
 #ifndef TRSK_PENJUALAN_H
 #define TRSK_PENJUALAN_H
 
-/*
-#include "../Source/Deklarasi.h"
-*/
 
 void transaksiPenjualan() {
     cleanKanan();
@@ -227,7 +224,7 @@ void transaksiPenjualan() {
 
     // Menampilkan struk
     cleanKiri();
-    gotoxy(batasKiri, 5); printf("=== [ STRUK PENJUALAN ] ==============");
+    gotoxy(batasKiri, 5); printf("=== [ DATA PENJUALAN ] ==============");
     gotoxy(batasKiri, 8); printf("ID Penjualan");
     gotoxy(batasKiri+50, 8); printf("| %-40s|", penjualan.idPenjualan);
 
@@ -266,8 +263,6 @@ void transaksiPenjualan() {
 
     getchar(); getchar();
     fclose(filePenjualan);
-    if (jenisPilihan == 1) fclose(fileProduk);
-    else fclose(fileAksessoris);
 }
 
 void displayTransaksiPenjualan() {
@@ -349,7 +344,7 @@ void displayTransaksiPenjualan() {
 
     // Menampilkan struk
     cleanKiri();
-    gotoxy(batasKiri, 5); printf("=== [ STRUK PENJUALAN ] ==============");
+    gotoxy(batasKiri, 5); printf("=== [ DATA PENJUALAN ] ==============");
     gotoxy(batasKiri, 8); printf("ID Penjualan");
     gotoxy(batasKiri+50, 8); printf("| %-40s|", penjualan.idPenjualan);
 
@@ -406,7 +401,7 @@ void TransaksiPenjualan() {
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
         SetColor(colorHeadText);
-        gotoxy(PosisiX - 5, 2); printf("  %-35s", man);
+        gotoxy(PosisiX - 5, 2); printf(" %-37s", man);
         gotoxy(PosisiX - 5, 40); printf("%38c", space);
         SetColor(text2);
 

@@ -1,186 +1,17 @@
 #ifndef CRUD_GARANSI_H
 #define CRUD_GARANSI_H
 
+#include "crud_Member.h"
 #include "Deklarasi.h"
 #include "../Tampilan/Tampilan.h"
-
-/*void inputGaransi();
-void viewGaransi();
-void changeGaransi();
-void deleteGaransi();
-
-void crudGaransi () {
-    /* DECLARATION #1#
-    int menu;
-
-    /* ALGORITHM #1#
-    system("cls");
-    do {
-    printf ("\n---- Menu Garansi ----\n\n");
-    printf ("1. Tambah data Garansi\n");
-    printf ("2. Lihat data Garansi\n");
-    printf ("3. Ubah data Garansi\n");
-    printf ("4. Hapus data Garansi\n");
-    printf ("5. EXIT PROGRAM\n");
-    printf ("Pilih menu program:");
-    scanf  ("%d", &menu);
-
-        switch (menu) {
-            case 1:inputGaransi(); break;
-            case 2:viewGaransi(); break;
-            case 3:changeGaransi(); break;
-            case 4:deleteGaransi();break;
-            case 5:
-                printf ("\nProgram Terminated\n");
-                system("cls"); break;
-            default: printf ("\nInvalid Input\n");
-        }
-    } while (menu != 5);
-    getch();
-}
-
-void inputGaransi() {
-    /* DECLARATION #1#
-
-    /* ALGORITHM #1#
-    printf ("\n---- Tambah Data Garansi ----\n\n");
-    fileGaransi = fopen("Garansi.dat", "ab");
-    printf("ID Garansi:");
-    scanf ("%s", &garansi.idGrns);
-    fflush(stdin);
-    while (strcmp(garansi.idGrns,"selesai")!=0) {
-        printf ("Jenis Garansi :");
-        gets(garansi.jenisGrns);
-        fflush(stdin);
-        printf (" Durasi :");
-        gets(garansi.durasi);
-        fflush(stdin);
-        printf (" Ketentuan :");
-        gets(garansi.ketentuan);
-        fflush(stdin);
-        printf (" Status :");
-        scanf ("%d", &garansi.status);
-        fwrite (&garansi, sizeof(garansi), 1, fileGaransi);
-        printf ("\n");
-        printf ("ID Garansi:");  scanf("%s",&garansi.idGrns);  fflush(stdin);
-    }
-    printf("\n");
-    fclose (fileGaransi);
-}
-
-void viewGaransi() {
-    /* DECLARATION #1#
-
-    /* ALGORITHM #1#
-    fileGaransi = fopen("Garansi.dat", "rb");
-    if (!fileGaransi) {
-        printf ("File Not Found\n");
-        return;
-    }
-
-    printf ("\n---- Lihat Data Garansi ----\n\n");
-    while (fread(&garansi, sizeof(garansi), 1, fileGaransi)) {
-        printf ("ID Garansi        :%s\n", garansi.idGrns);
-        printf ("Jenis Garansi     :%s\n", garansi.jenisGrns);
-        printf ("Durasi            :%s\n", garansi.durasi);
-        printf("Ketentuan          :%s\n", garansi.ketentuan);
-        printf ("Status            :%d\n", garansi.status);
-
-        printf ("\n");
-    }
-    fclose (fileGaransi);
-}
-
-
-void changeGaransi() {
-    /* DECLARATION #1#
-    Boolean found;
-    char idTarget[10];
-
-    /* ALGORITHM #1#
-    printf ("\n---- Ubah Data Garansi ----\n\n");
-    printf ("Masukkan ID Garansi:"); scanf ("%s", &idTarget);
-    fileGaransi = fopen("Garansi.dat", "rb");
-    tempGaransi = fopen("temp.dat", "wb");
-
-    found = False;
-    while (!found && !feof(fileGaransi)) {
-        fread(&garansi, sizeof(garansi), 1, fileGaransi);
-         if (strcmp(garansi.idGrns,idTarget)==0) {
-            found = True;
-        } else {
-            fwrite(&garansi, sizeof(garansi), 1, tempGaransi);
-        }
-    }
-
-    if (found) {
-        printf ("Masukkan Jenis Garansi baru:"); scanf(" %[^\n]%*c", garansi.jenisGrns);
-        printf("Durasi:"); scanf ("%[^\n]%*c", garansi.durasi);
-        printf("ketentuan:"); scanf ("%[^\n]%*c", garansi.ketentuan);
-        fwrite(&garansi, sizeof(garansi), 1, tempGaransi);
-        printf ("Data Berhasil Di Perbaharui\n");
-
-        while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
-            fread(&garansi, sizeof(garansi), 1, fileGaransi);
-            fwrite(&garansi, sizeof(garansi), 1, tempGaransi);
-        }
-    } else {
-        printf ("\nID %s Tidak Ditemukan Di Dalam File\n", idTarget);
-    }
-    fclose (fileGaransi);
-    fclose (tempGaransi);
-
-    tempGaransi = fopen("temp.dat", "rb");
-    fileGaransi = fopen("Garansi.dat", "wb");
-    while (!feof(tempGaransi)) {
-        fread(&garansi, sizeof(garansi), 1, tempGaransi);
-        fwrite(&garansi, sizeof(garansi), 1, fileGaransi);
-    }
-    fclose (tempGaransi);
-    fclose (fileGaransi);
-
-    remove ("Garansi.dat");
-    rename("temp.dat", "Garansi.dat");
-}
-
-void deleteGaransi() {
-    /* DECLARATION #1#
-    Boolean found;
-    char idTarget[10];
-
-    /* ALGORITHM #1#
-    printf ("\n---- Hapus data Garansi ----\n\n");
-    printf ("Masukkan ID Garansi:"); scanf ("%s", &idTarget);
-    fileGaransi = fopen("Garansi.dat", "rb");
-    tempGaransi = fopen("temp.dat", "wb");
-    found = False;
-    while (fread(&garansi, sizeof(garansi), 1, fileGaransi)) {
-        if (strcmp(garansi.idGrns,idTarget)==0) {
-            found = True;
-            printf ("\nData Berhasil Di Hapus\n");
-        } else {
-            fwrite(&garansi, sizeof(garansi), 1, tempGaransi);
-        }
-    }
-
-    if (!found) {
-        printf ("Data Garansi tidak di temukan\n");
-    }
-    fclose (fileGaransi);
-    fclose (tempGaransi);
-
-    remove ("Garansi.dat");
-    rename("temp.dat", "Garansi.dat");
-}*/
 
 void inputGaransi(int n) {
     system("cls");
     templateUI();
-    cleanKiri();
 
     char kodeGaransi[] = {"GRS"};
     int idTerakhir = 0;
-    int batasKiri = 3;
+    int batasKiri = 5;
 
     fileGaransi = fopen("../Database/dat/Garansi.dat", "ab+");
     if (fileGaransi == NULL) {
@@ -193,7 +24,7 @@ void inputGaransi(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(garansi.idGrns, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
+    gotoxy(batasKiri, 2); SetColor(colorMainText);
 
     // Looping pembuatan id cabang
     for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
@@ -201,9 +32,8 @@ void inputGaransi(int n) {
         snprintf(garansi.idGrns, sizeof(garansi.idGrns), "%s%i", kodeGaransi, i);
 
         // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA GARANSI ] ===========");
-        SetColorBlock(3,7);
         gotoxy(batasKiri, 5); printf("ID Garansi");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", garansi.idGrns);
 
@@ -219,11 +49,11 @@ void inputGaransi(int n) {
         gotoxy(batasKiri, 17); printf("Status");
         gotoxy(batasKiri+50, 17); printf("| %-40s|", "Aktif");
 
-        gotoxy(55, 8); getteks(garansi.jenisGrns, 50);
+        gotoxy(57, 8); getteks(garansi.jenisGrns, 50);
 
-        gotoxy(55, 11); getnum(&garansi.durasi, 1);
+        gotoxy(57, 11); getnum(&garansi.durasi, 1);
 
-        gotoxy(55, 14); getteks(garansi.ketentuan, 50);
+        gotoxy(57, 14); getteks(garansi.ketentuan, 50);
 
         strcpy(garansi.status, "Aktif");
 
@@ -242,7 +72,7 @@ void readdataGaransiINJS() {
     char status[] = "STATUS";
 
     int i = 1;
-    int yTeks = 4;
+    int yTeks = 6;
 
     fileGaransi = fopen("../Database/dat/Garansi.dat", "rb");
     if (fileGaransi == NULL) {
@@ -250,23 +80,16 @@ void readdataGaransiINJS() {
         return;
     }
 
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColorBlock(3, 7);
-    gotoxy(3, 2);
-    printf(" %-8s   %-20s   %-15s   %15s   %-10s\n", id, jenis, durasi, ketentuan, status);
-
     while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-8s   %-20s   %-15d  %15s  %-10s\n", garansi.idGrns, garansi.jenisGrns, garansi.durasi, garansi.ketentuan,  garansi.status);
+        printTable(20, 95, 3, 38);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(20, 4);printf(" %-8s  %-20s  %-15s  %-10s\n", id, jenis, durasi, status);
+        gotoxy(20, yTeks);printf(" %-8s  %-20s  %-15d  %-10s\n", garansi.idGrns, garansi.jenisGrns, garansi.durasi, garansi.status);
 
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
-            getchar(); // Wait for user input
+        if (i % 35 == 0) {
+            getchar();
             cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-8s   %-20s   %-15d  %15s  %-10s\n", garansi.idGrns, garansi.jenisGrns, garansi.durasi, garansi.ketentuan,  garansi.status);
+            yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
         }
         i++;
         yTeks++;
@@ -278,19 +101,20 @@ void readdataGaransiINJS() {
 void readDetailGaransi() {
     int batasKiri = 3;
     char idGrns[10];
-    system("cls");
+    cleanKanan();
+    cleanKiri();
     retype:
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", "W E L C O M E  A D M I N");
-    gotoxy(115, 41); printf("%38c", ' ');
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(124, 11); printf("Masukkan ID Garansi");
-    gotoxy(129, 15); printf("[        ]");
+    SetColor(colorHeadText);
+    gotoxy(130, 2); printf("   %-35s", "W E L C O M E  A D M I N");
+    gotoxy(130, 41); printf("%38c", ' ');
+    gotoxy(130, 5); SetColor(text2);
+    gotoxy(135, 13); printf("Masukkan ID Garansi");
+    gotoxy(135, 15); printf("[        ]");
 
     readdataGaransiINJS();
-    frame();
 
-    gotoxy(131, 15); getteks(idGrns, 6);
+    gotoxy(137, 15); getteks(idGrns, 6);
     cleanKiri();
 
     int i = 1;
@@ -298,7 +122,7 @@ void readDetailGaransi() {
     //Membuka file dengan mode rb
     fileGaransi = fopen("../Database/dat/Garansi.dat", "rb");
 
-    gotoxy(0, 3); SetColorBlock(3,7);
+    gotoxy(0, 3); SetColor(colorMainText);
     while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
         if (strcmp(idGrns, garansi.idGrns) == 0) {
             found = 1;
@@ -309,6 +133,7 @@ void readDetailGaransi() {
 
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Garansi");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", garansi.idGrns);
 
@@ -316,7 +141,7 @@ void readDetailGaransi() {
         gotoxy(batasKiri+50, 8); printf("| %-40s|", garansi.jenisGrns);
 
         gotoxy(batasKiri, 11); printf("Durasi");
-        gotoxy(batasKiri+50, 11); printf("| %-40s|", garansi.durasi);
+        gotoxy(batasKiri+50, 11); printf("| %-40d|", garansi.durasi);
 
         gotoxy(batasKiri, 14); printf("Ketentuan");
         gotoxy(batasKiri+50, 14); printf("| %-40s|", garansi.ketentuan);
@@ -325,10 +150,9 @@ void readDetailGaransi() {
         gotoxy(batasKiri+50, 17); printf("| %-40s|", garansi.status);
     } else {
         showMessage("ALERT!", "ID Garansi tidak ditemukan");
-        gotoxy(131, 15); printf("       ");
         goto retype;
     }
-    gotoxy(123, 30); printf("Press ENTER to back...");
+    gotoxy(135, 30); printf("Press ENTER to back...");
     getchar();
     //Menutup file setelah membaca
     fclose(fileGaransi);
@@ -338,14 +162,15 @@ void readDetailGaransi() {
 void updateGaransi() {
     int found;
     found = 0;
-    char No[10];
+    char idGaransi[10];
     int batasKiri = 5;
 
     retype:
     cleanKanan();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Garansi : [   ]");
-    gotoxy(row+17, 15); getteks(No, 6);
+    readdataGaransiINJS();
+    gotoxy(135, 5); SetColor(text2);
+    gotoxy(135, 10); printf("ID Produk : [      ]");
+    gotoxy(149, 10); getteks(idGaransi, 4);
 
     //Membuka file asli dengan mode rb
     fileGaransi = fopen("../Database/dat/Garansi.dat", "rb");
@@ -354,7 +179,7 @@ void updateGaransi() {
     //Pencarian data dalam file menggunakan loopung
     while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(No, garansi.idGrns) == 0) {
+        if (strcmp(idGaransi, garansi.idGrns) == 0) {
             found = 1;
             break;
         } else {
@@ -365,6 +190,7 @@ void updateGaransi() {
     //Proses lanjutan setelah data ditemukan
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("ID Garansi");
         gotoxy(batasKiri+50, 3); printf("| %-40s|", garansi.idGrns);
 
@@ -372,7 +198,7 @@ void updateGaransi() {
         gotoxy(batasKiri+50, 4); printf("| %-40s|", garansi.jenisGrns);
 
         gotoxy(batasKiri, 5); printf("Durasi");
-        gotoxy(batasKiri+50, 5); printf("| %-40s|", garansi.durasi);
+        gotoxy(batasKiri+50, 5); printf("| %-40d|", garansi.durasi);
 
         gotoxy(batasKiri, 6); printf("Ketentuan");
         gotoxy(batasKiri+50, 6); printf("| %-40s|", garansi.ketentuan);
@@ -381,9 +207,9 @@ void updateGaransi() {
         gotoxy(batasKiri+50, 7); printf("| %-40s|", garansi.status);
 
         // MENAMPILKAN TEKS UNTUK INPUT
-        SetColorBlock(3,7);
-        gotoxy(batasKiri, 13); printf("=MASUKKAN DATA YANG BARU===========");
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
+        gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
+        SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Garansi");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", garansi.idGrns);
 
@@ -402,8 +228,8 @@ void updateGaransi() {
         char namTemp[50];
         gotoxy(57, 17); getteks(namTemp, 50);
 
-        char durasiTemp[10];
-        gotoxy(57, 19); getteks(durasiTemp, 50);
+        int durasiTemp = 0;
+        gotoxy(57, 19); getnum(&durasiTemp, 2);
 
         char ketentuanTemp[10];
             gotoxy(57, 21); getteks(ketentuanTemp, 35);
@@ -412,9 +238,9 @@ void updateGaransi() {
         gotoxy(57, 23); getteks(statusTemp, 10);
 
         if (doaction("UBAH DATA") == 1) {
-            strcpy(garansi.idGrns, No);
+            strcpy(garansi.idGrns, idGaransi);
             strcpy(garansi.jenisGrns, namTemp);
-            strcpy(garansi.durasi, durasiTemp);
+            garansi.durasi = durasiTemp;
             strcpy(garansi.ketentuan, ketentuanTemp);
             strcpy(garansi.status, statusTemp);
             fwrite(&garansi, sizeof(garansi), 1, tempGaransi);
@@ -430,7 +256,6 @@ void updateGaransi() {
 
     } else {
         showMessage("ALERT!", "ID Garansi tidak ditemukan");
-        gotoxy(row + 17, 15); printf("       ");
         goto retype;
     }
     fclose(fileGaransi);
@@ -440,14 +265,22 @@ void updateGaransi() {
 void deleteDataGaransi() {
     int found;
     found = 0;
-    char No[10];
+    char idGaransi[10];
     int batasKiri = 5;
+    int PosisiX = 135;
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     retype:
     cleanKanan();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Garansi : [   ]");
-    gotoxy(row+17, 15); getteks(No, 6);
+    cleanKiri();
+    readdataGaransiINJS();
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("ID Garansi : [      ]");
+    gotoxy(PosisiX+15, 10); getteks(idGaransi, 4);
 
     //Membuka file asli dengan mode rb
     fileGaransi = fopen("../Database/dat/Garansi.dat", "rb");
@@ -456,7 +289,7 @@ void deleteDataGaransi() {
     //Pencarian data dalam file menggunakan loopung
     while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(No, garansi.idGrns) == 0) {
+        if (strcmp(idGaransi, garansi.idGrns) == 0) {
             cleanKiri();
             gotoxy(batasKiri, 5); printf("ID Garansi");
             gotoxy(batasKiri+50, 5); printf("| %-40s|", garansi.idGrns);
@@ -465,7 +298,7 @@ void deleteDataGaransi() {
             gotoxy(batasKiri+50, 8); printf("| %-40s|", garansi.jenisGrns);
 
             gotoxy(batasKiri, 11); printf("Durasi");
-            gotoxy(batasKiri+50, 11); printf("| %-40s|", garansi.durasi);
+            gotoxy(batasKiri+50, 11); printf("| %-40d|", garansi.durasi);
 
             gotoxy(batasKiri, 14); printf("Ketentuan");
             gotoxy(batasKiri+50, 14); printf("| %-40s|", garansi.ketentuan);
@@ -499,17 +332,19 @@ void deleteDataGaransi() {
 }
 
 void MenuAddGaransi() {
-    system("cls");
-    frame();
+    cleanKanan();
+    int PosisiX = 135;
 
     int n;
-    char Admin[] = "W E L C O M E  A D M I N";
+    char man[] = "W E L C O M E  A D M I N";
     char space = " ";
-    gotoxy(115, 2); SetColorBlock(3,7);printf(" %-35s", Admin);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-    gotoxy(115+27, 10); getnum(&n, 1);
+
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("Banyaknya data : [   ]");
+    gotoxy(PosisiX+19, 10); getnum(&n, 1);
 
     inputGaransi(n);
     system("cls");
@@ -517,18 +352,23 @@ void MenuAddGaransi() {
 }
 
 void menuReadGaransi() {
+    cleanKanan();
+    int PosisiX = 135;
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", man);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(123, 35); printf("Press ENTER to next...");
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataGaransiINJS();
     getch();
     if (lihatDetil() == 1) {
         readDetailGaransi();
     }
+    system("cls");
+    frame();
 }
 
 void menuUpdateGaransi() {
@@ -546,6 +386,8 @@ void menuUpdateGaransi() {
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileGaransi);
     fclose(tempGaransi);
+    system("cls");
+    frame();
 }
 
 void menuDeleteGaransi() {
@@ -563,31 +405,41 @@ void menuDeleteGaransi() {
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileGaransi);
     fclose(tempGaransi);
+    system("cls");
+    frame();
 }
 
 void crudGaransi() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
 
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
+
+    system("cls");
+    frame();
+
     do {
-        system("cls");
-        frame();
 
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("  ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Tambah Data Garansi"); break;
                 case 2: printf("Lihat Data Garansi"); break;
@@ -620,8 +472,8 @@ void crudGaransi() {
                 case 4:
                     menuDeleteGaransi(); break;
                 case 5:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
-                    printf("Program Terminated.\n");
+                    system("cls");
+                    frame();
                     return;
                 default:
                     gotoxy(PosisiX, PosisiY + totalMenu + 2);

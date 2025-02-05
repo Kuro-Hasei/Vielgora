@@ -7,11 +7,10 @@
 void inputDiskon1(int n) {
     system("cls");
     templateUI();
-    cleanKiri();
 
     char kodeDiskon[] = {"DSK"};
     int idTerakhir = 0;
-    int batasKiri = 3;
+    int batasKiri = 5;
 
     fileDiskon = fopen("../Database/dat/Diskon.dat", "ab+");
     if (fileDiskon == NULL) {
@@ -24,7 +23,7 @@ void inputDiskon1(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(diskon.idDsk, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
+    gotoxy(batasKiri, 2); SetColor(colorMainText);
 
     // Looping pembuatan id cabang
     for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
@@ -33,9 +32,9 @@ void inputDiskon1(int n) {
         snprintf(diskon.idDsk, sizeof(diskon.idDsk), "%s%i", kodeDiskon, i);
 
         // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA PRODUK ] ===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Diskon");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", diskon.idDsk);
 
@@ -48,11 +47,11 @@ void inputDiskon1(int n) {
         gotoxy(batasKiri, 14); printf("Batas Point");
         gotoxy(batasKiri+50, 14); printf("| %-40s|", " ");
 
-        gotoxy(55, 8); getteks(diskon.jenisDsk, 20);
+        gotoxy(57, 8); getteks(diskon.jenisDsk, 20);
 
-        gotoxy(55, 11); getteks(diskon.persentase, 10);
+        gotoxy(57, 11); getteks(diskon.persentase, 10);
 
-        gotoxy(55, 14); getnum(&diskon.batasPoin, 5);
+        gotoxy(57, 14); getnum(&diskon.batasPoin, 5);
 
         fwrite(&diskon, sizeof(diskon), 1, fileDiskon);
     }
@@ -67,7 +66,7 @@ void readdataDiskon2() {
     char persentase[] = "PERSENTASE";
     char batasPoin[] = "BATAS POIN";
     int i = 1;
-    int yTeks = 4;
+    int yTeks = 6;
 
     fileDiskon = fopen("../Database/dat/Diskon.dat", "rb");
     if (fileDiskon == NULL) {
@@ -75,22 +74,16 @@ void readdataDiskon2() {
         return;
     }
 
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColorBlock(3, 7);
-    gotoxy(3, 2);
-    printf(" %-10s   %-20s   %-30s   %-20s\n", id, jenis, persentase, batasPoin);
 
     while (fread(&diskon, sizeof(diskon), 1, fileDiskon) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-10s   %-20s   %-30s   %-20d\n", diskon.idDsk, diskon.jenisDsk, diskon.persentase, diskon.batasPoin);
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
-            getchar(); // Wait for user input
+        printTable(10, 100, 3, 38);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(10, 4);printf(" %-10s   %-20s   %-30s   %-20s\n", id, jenis, persentase, batasPoin);
+        gotoxy(10, yTeks);printf(" %-10s   %-20s   %-30s   %-20d\n", diskon.idDsk, diskon.jenisDsk, diskon.persentase, diskon.batasPoin);
+        if (i % 35 == 0) {
+            getchar();
             cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-10s   %-20s   %-30s   %-20s\n", id, jenis, persentase, batasPoin);
+            yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
         }
         i++;
         yTeks++;
@@ -107,9 +100,9 @@ void updateDiskon() {
     retype:
     cleanKanan();
     readdataDiskon2();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Produk : [      ]");
-    gotoxy(115+22, 10); getteks(idDiskon, 4);
+    gotoxy(135, 5); SetColor(text2);
+    gotoxy(135, 10); printf("ID Diskon : [      ]");
+    gotoxy(149, 10); getteks(idDiskon, 4);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -144,9 +137,9 @@ void updateDiskon() {
         gotoxy(batasKiri+50, 6); printf("| %-40d|", diskon.batasPoin);
 
         // MENAMPILKAN TEKS UNTUK INPUT
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Diskon");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", diskon.idDsk);
 
@@ -194,13 +187,19 @@ void deleteDataDiskon() {
     found = 0;
     char idDiskon[10];
     int batasKiri = 5;
+    int PosisiX = 135;
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     retype:
     cleanKanan();
     readdataDiskon2();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("ID Diskon : [      ]");
-    gotoxy(115+22, 10); getteks(idDiskon, 4);
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("ID Produk : [      ]");
+    gotoxy(PosisiX+14, 10); getteks(idDiskon, 4);
 
     //Membuka file asli dengan mode rb
     fileDiskon = fopen("../Database/dat/Diskon.dat", "rb");
@@ -249,17 +248,19 @@ void deleteDataDiskon() {
 }
 
 void menuAddDiskon() {
-    system("cls");
-    frame();
+    cleanKanan();
+    int PosisiX = 135;
 
     int n;
-    char Admin[] = "W E L C O M E  A D M I N";
+    char man[] = "W E L C O M E  A D M I N";
     char space = " ";
-    gotoxy(115, 2); SetColorBlock(3,7); printf(" %-35s", Admin);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-    gotoxy(115+27, 10); scanf("%d", &n);
+
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("Banyaknya data : [   ]");
+    gotoxy(PosisiX+19, 10); getnum(&n, 1);
 
     inputDiskon1(n);
     system("cls");
@@ -267,13 +268,16 @@ void menuAddDiskon() {
 }
 
 void menuReadDiskon() {
+    cleanKanan();
+    int PosisiX = 135;
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", man);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(123, 35); printf("Press ENTER to next...");
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataDiskon2();
     getch();
     /*if (lihatDetil() == 1) {
@@ -323,28 +327,35 @@ void menuDeleteDiskon() {
 
 // CRUD Menu
 void crudDiskon() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
+
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     system("cls");
     frame();
 
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Tambah Data Diskon"); break;
                 case 2: printf("Lihat Data Diskon"); break;

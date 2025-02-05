@@ -33,8 +33,9 @@ void inputProduk1(int n) {
         snprintf(produk.idPrd, sizeof(produk.idPrd), "%s%i", kodeProduk, i);
 
         // Menampilkan Teks Untuk Input
-        SetColor(text2);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA PRODUK ] ===========");
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Produk");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", produk.idPrd);
 
@@ -47,8 +48,8 @@ void inputProduk1(int n) {
         gotoxy(batasKiri, 14); printf("Harga Produk");
         gotoxy(batasKiri+50, 14); printf("| RP.%-37s|", " ");
 
-        gotoxy(batasKiri, 17); printf("status Produk");
-        gotoxy(batasKiri+50, 17); printf("| %-40s|", "Tersedia");
+        gotoxy(batasKiri, 17); printf("Jumlah Produk");
+        gotoxy(batasKiri+50, 17); printf("| %-40s|", " ");
 
         gotoxy(57, 8); getteks(produk.jenisPrd, 15);
 
@@ -56,7 +57,7 @@ void inputProduk1(int n) {
 
         getRp(&produk.harga, 5, 9, 61, 14);
 
-        strcpy(produk.status, "Tersedia");
+        gotoxy(57, 17); getnum(&produk.quantity, 2);
 
         fwrite(&produk, sizeof(produk), 1, fileProduk);
     }
@@ -70,7 +71,7 @@ void readdataProduk2() {
     char jenis[] = "JENIS";
     char nama[] = "NAMA";
     char harga[] = "HARGA";
-    char status[] = "STATUS";
+    char status[] = "JUMLAH";
 
     int i = 1;
     int yTeks = 6;
@@ -88,7 +89,7 @@ void readdataProduk2() {
         gotoxy(10, 4);printf("  %-10s  %-15s  %-25s  %-20s  %-20s", id, jenis, nama, harga, status );
         char hargaPrd[20];
         rupiah(produk.harga, hargaPrd);
-        gotoxy(10, yTeks); printf("  %-10s  %-15s  %-25s  RP. %-16s  %-20s", produk.idPrd, produk.jenisPrd, produk.namaPrd, hargaPrd, produk.status );
+        gotoxy(10, yTeks); printf("  %-10s  %-15s  %-25s  RP. %-16s  %-20d", produk.idPrd, produk.jenisPrd, produk.namaPrd, hargaPrd, produk.quantity );
         if (i % 35 == 0) {
             getchar();
             cleanKiri();
@@ -149,8 +150,8 @@ void updateProduk() {
         rupiah(produk.harga, hargaPrd);
         gotoxy(batasKiri+50, 6); printf("| RP.%-37s|", hargaPrd);
 
-        gotoxy(batasKiri, 7); printf("Status Produk");
-        gotoxy(batasKiri+50, 7); printf("| %-40s|", produk.status);
+        gotoxy(batasKiri, 7); printf("Jumlah Produk");
+        gotoxy(batasKiri+50, 7); printf("| %-40d|", produk.quantity);
 
         // MENAMPILKAN TEKS UNTUK INPUT
         SetColor(colorHeadText);
@@ -168,19 +169,19 @@ void updateProduk() {
         gotoxy(batasKiri, 21); printf("Harga Produk");
         gotoxy(batasKiri+50, 21); printf("| RP. %-36s|", " ");
 
-        gotoxy(batasKiri, 23); printf("Stats Produk");
+        gotoxy(batasKiri, 23); printf("Jumlah Produk");
         gotoxy(batasKiri+50, 23); printf("| %-40s|", " ");
 
         int hargaTemp;
         getRp(&hargaTemp, 5, 9, 61, 21);
 
-        char statusTemp[15];
-        gotoxy(57, 23); getteks(statusTemp, 15);
+        int QT;
+        gotoxy(57, 23); getnum(&QT, 2);
 
         if (doaction("UBAH DATA") == 1) {
             strcpy(produk.idPrd, idProduk);
             produk.harga = hargaTemp;
-            strcpy(produk.status, statusTemp);
+            produk.quantity = QT;
 
             fwrite(&produk, sizeof(produk), 1, tempProduk);
             while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
@@ -228,6 +229,7 @@ void deleteDataProduk() {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
         if (strcmp(idProduk, produk.idPrd) == 0) {
             cleanKiri();
+            SetColor(text2);
             gotoxy(batasKiri, 5); printf("ID Produk");
             gotoxy(batasKiri+50, 5); printf("| %-40s|", produk.idPrd);
 
@@ -241,7 +243,7 @@ void deleteDataProduk() {
             gotoxy(batasKiri+50, 14); printf("| RP. %-36d|", produk.harga);
 
             gotoxy(batasKiri, 17); printf("status Produk");
-            gotoxy(batasKiri+50, 17); printf("| %-40s|", produk.status);
+            gotoxy(batasKiri+50, 17); printf("| %-40d|", produk.quantity);
             getchar();
             getchar();
             if (deleteData() == 1) {
@@ -300,10 +302,6 @@ void menuReadProduk() {
     gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataProduk2();
     getch();
-    /* BUAT LIAT DETAIL JIKA DI PERLUKAN */
-    /*if (lihatDetil() == 1) {
-        readdataProduk2();
-    }*/
     system("cls");
     frame();
 }

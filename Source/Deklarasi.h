@@ -71,7 +71,6 @@ typedef struct {
     char nama [50];
     char tglLhr[12];
     char alamat[50];
-    char RP[20];
     char noTelp[15];
     char status[10];
 }DTMember;
@@ -97,7 +96,7 @@ typedef struct {
     char jenisAks[15];
     char namaAks[50];
     int harga;
-    char status[15];
+    int quantity;
 } DTAksessoris;
 DTAksessoris aksessoris;
 FILE *fileAksessoris;
@@ -109,7 +108,7 @@ typedef struct {
     char jenisPrd[15];
     char namaPrd[50];
     int harga;
-    char status[15];
+    int quantity;
 } DTProduk;
 DTProduk produk;
 FILE *fileProduk;
@@ -158,6 +157,9 @@ FILE *tempDiskon;
 typedef struct {
     char idPembelian[10];
     char tanggalPembelian[15];
+    char idSupplier[10];
+    char kategori[50];
+    int hargaSatuan;
     int totalPembelian;
     int totalHarga;
     char metodePembayaran[10];
@@ -197,6 +199,7 @@ FILE *tempKlaimGaransi;
 /*==================== TRANSAKSI MEMBER ====================*/
 typedef struct {
     char idTransaksiMember[10];
+    char namaPelanggan[30];
     char tanggalAktivitas[15];
     char totalPembayaran[15];
     char metodePembayaran[20];

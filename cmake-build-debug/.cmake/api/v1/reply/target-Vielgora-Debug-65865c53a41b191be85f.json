@@ -133,11 +133,6 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "cmake-build-debug/Menu_Admin.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 1,
 			"path" : "Source/crud_Karyawan.h",
 			"sourceGroupIndex" : 1
 		},
@@ -219,6 +214,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Laporan/Laporan.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ProgramTemp/TempProgram.h",
 			"sourceGroupIndex" : 1
 		}
 	],

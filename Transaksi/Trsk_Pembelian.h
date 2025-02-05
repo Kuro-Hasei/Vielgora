@@ -2,63 +2,29 @@
 #define TRSK_PEMBELIAN_H
 
 void transaksiPembelian() {
-    system("cls");
+    cleanKanan();
+    int PosisiX = 130;
+    int batasKiri = 5;
 
-    char idSupplier[10], idProduk[10], idAksesoris[10];
-    int jumlah, jumlahAks, pilihan;
-    int foundSupplier = 0, foundProduk = 0, foundAksesoris = 0;
-    float totalHargaAksessoris = 0;
-    float totalHargaProduk = 0;
+    char idSupplier[10], lastID[10], idItem[10], namaBarang[10];
+    int jumlah, jenisPilihan;
+    int foundSupplier = 0, foundBarang = 0, hargaBarang = 0, lastNumber = 0;;
 
-    int PosisiX = 10, PosisiY = 5;
+    readdataSupplierALL();
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan ID Supplier: ");
+    gotoxy(PosisiX,11); printf("[      ]");
+    gotoxy(PosisiX+2,11); getteks(idSupplier, 4);
+    cleanKanan();
 
-    // Membuka file Supplier
-    fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
+    // Buka file karyawan dan cari ID
+    fileSupplier= fopen("../Database/dat/Supplier.dat", "rb");
     if (fileSupplier == NULL) {
         perror("Failed to open Supplier.dat");
         return;
     }
 
-    // Membuka file Produk
-    fileProduk = fopen("../Database/dat/Produk.dat", "rb");
-    if (fileProduk == NULL) {
-        perror("Failed to open Produk.dat");
-        fclose(fileSupplier);
-        return;
-    }
-
-    // Membuka file Aksesoris
-    fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
-    if (fileAksessoris == NULL) {
-        perror("Failed to open Aksesoris.dat");
-        fclose(fileSupplier);
-        fclose(fileProduk);
-        return;
-    }
-
-    // Membuka file Pembelian
-    filePembelian = fopen("../Database/dat/Pembelian.dat", "ab+");
-    if (filePembelian == NULL) {
-        perror("Failed to open Pembelian.dat");
-        fclose(fileSupplier);
-        fclose(fileProduk);
-        fclose(fileAksessoris);
-        return;
-    }
-
-    // Pilihan menu sebelum menginput produk
-    gotoxy(PosisiX, PosisiY); printf("Pilih jenis transaksi:");
-    gotoxy(PosisiX, PosisiY + 2); printf("1. Penjualan Produk");
-    gotoxy(PosisiX, PosisiY + 3); printf("2. Penjualan Aksesoris");
-    gotoxy(PosisiX, PosisiY + 5); printf("Masukkan pilihan (1/2): ");
-    gotoxy(PosisiX + 25, PosisiY + 5); scanf("%d", &pilihan);
-
-    // Input ID Supplier
-    gotoxy(PosisiX, PosisiY + 7); printf("Masukkan ID Supplier: ");
-    gotoxy(PosisiX + 30, PosisiY + 7); scanf("%s", idSupplier);
-
-    // Cari supplier berdasarkan ID
-    while (fread(&supplier, sizeof(DTSupplier), 1, fileSupplier) == 1) {
+    while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
         if (strcmp(supplier.idSpl, idSupplier) == 0) {
             foundSupplier = 1;
             break;
@@ -66,188 +32,328 @@ void transaksiPembelian() {
     }
 
     if (!foundSupplier) {
-        gotoxy(PosisiX, PosisiY + 9); printf("Supplier dengan ID %s tidak ditemukan!\n", idSupplier);
-        fclose(fileSupplier);
+        showMessage("ATTENTION", "ID TIDAK DI TEMUKAN");
+        return;
+    }
+    fclose(fileSupplier);
+
+    cleanKiri();
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Pilih jenis barang [   ]");
+    gotoxy(PosisiX,11); printf("1. Produk ");
+    gotoxy(PosisiX,12); printf("2. Aksesoris ");
+    gotoxy(PosisiX+21,10); getnum(&jenisPilihan,1);
+    cleanKanan();
+
+    if (jenisPilihan == 1) {
+        fileProduk = fopen("../Database/dat/Produk.dat", "rb");
+        readdataProduk2();
+        if (fileProduk == NULL) {
+            perror("Failed to open Produk.dat");
+            return;
+        }
         fclose(fileProduk);
+    } else if (jenisPilihan == 2) {
+        fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
+        readdataAksesoris2();
+        if (fileAksessoris == NULL) {
+            perror("Failed to open Aksessoris.dat");
+            return;
+        }
         fclose(fileAksessoris);
-        fclose(filePembelian);
+    } else {
+        printf("Pilihan tidak valid!\n");
         return;
     }
 
-    // Menampilkan data supplier
-    gotoxy(PosisiX, PosisiY + 9); printf("=== Data Supplier ===");
-    gotoxy(PosisiX, PosisiY + 11); printf("ID Supplier : %s", supplier.idSpl);
-    gotoxy(PosisiX, PosisiY + 12); printf("Nama        : %s", supplier.namaSpl);
-    gotoxy(PosisiX, PosisiY + 13); printf("Alamat      : %s", supplier.alamat);
-    gotoxy(PosisiX, PosisiY + 14); printf("No. Telp    : %s", supplier.noTelp);
-
-    if (pilihan == 1) {
-        // Input data produk yang akan dibeli
-        gotoxy(PosisiX, PosisiY + 16); printf("Masukkan ID Produk yang ingin dibeli: ");
-        gotoxy(PosisiX + 40, PosisiY + 16); scanf("%s", idProduk);
-
-        // Cari produk berdasarkan ID
-        while (fread(&produk, sizeof(DTProduk), 1, fileProduk) == 1) {
-            if (strcmp(produk.idPrd, idProduk) == 0) {
-                foundProduk = 1;
-                break;
-            }
-        }
-
-        if (!foundProduk) {
-            gotoxy(PosisiX, PosisiY + 18); printf("Produk dengan ID %s tidak ditemukan!\n", idProduk);
-            fclose(fileSupplier);
-            fclose(fileProduk);
-            fclose(fileAksessoris);
-            fclose(filePembelian);
-            return;
-        }
-
-        // Menampilkan data produk
-        gotoxy(PosisiX, PosisiY + 18); printf("=== Data Produk ===");
-        gotoxy(PosisiX, PosisiY + 20); printf("ID Produk   : %s", produk.idPrd);
-        gotoxy(PosisiX, PosisiY + 21); printf("Nama Produk : %s", produk.namaPrd);
-        gotoxy(PosisiX, PosisiY + 22); printf("Harga       : RP.%d", produk.harga);
-
-        // Input jumlah produk
-        gotoxy(PosisiX, PosisiY + 24); printf("Masukkan jumlah produk yang ingin dibeli: ");
-        gotoxy(PosisiX + 45, PosisiY + 24); scanf("%d", &jumlah);
-
-        totalHargaProduk = jumlah * produk.harga;
-    } else if (pilihan == 2) {
-        // Input data aksesoris yang akan dibeli
-        gotoxy(PosisiX, PosisiY + 16); printf("Masukkan ID Aksesoris yang ingin dibeli: ");
-        gotoxy(PosisiX + 45, PosisiY + 16); scanf("%s", idAksesoris);
-
-        // Cari aksesoris berdasarkan ID
-        while (fread(&aksessoris, sizeof(DTAksessoris), 1, fileAksessoris) == 1) {
-            if (strcmp(aksessoris.idAks, idAksesoris) == 0 && strcmp(aksessoris.status, "Tersedia") == 0) {
-                foundAksesoris = 1;
-                break;
-            }
-        }
-
-        if (!foundAksesoris) {
-            gotoxy(PosisiX, PosisiY + 18); printf("Aksesoris tidak ditemukan atau tidak tersedia.");
-            fclose(fileSupplier);
-            fclose(fileProduk);
-            fclose(fileAksessoris);
-            fclose(filePembelian);
-            return;
-        }
-
-        // Menampilkan data aksesoris
-        gotoxy(PosisiX, PosisiY + 18); printf("=== Data Aksesoris ===");
-        gotoxy(PosisiX, PosisiY + 20); printf("ID Aksesoris  : %s", aksessoris.idAks);
-        gotoxy(PosisiX, PosisiY + 21); printf("Nama Aksesoris: %s", aksessoris.namaAks);
-        gotoxy(PosisiX, PosisiY + 22); printf("Harga         : RP. %d", aksessoris.harga);
-
-        // Input jumlah aksesoris
-        gotoxy(PosisiX, PosisiY + 24); printf("Masukkan jumlah aksesoris yang ingin dibeli: ");
-        gotoxy(PosisiX + 50, PosisiY + 24); scanf("%d", &jumlahAks);
-
-        totalHargaAksessoris = jumlahAks * aksessoris.harga;
-    }
-
-    // Generate ID Pembelian
-    snprintf(pembelian.idPembelian, sizeof(pembelian.idPembelian), "PB%d", ftell(filePembelian) / sizeof(DTPembelian) + 1);
-
-    // Simpan data pembelian
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    snprintf(pembelian.tanggalPembelian, sizeof(pembelian.tanggalPembelian), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
-    pembelian.totalPembelian = (pilihan == 1) ? jumlah : jumlahAks;
-    pembelian.totalHarga = totalHargaProduk + totalHargaAksessoris;
-    strcpy(pembelian.metodePembayaran, "Cash");
-
-    fwrite(&pembelian, sizeof(DTPembelian), 1, filePembelian);
-
-    gotoxy(PosisiX, PosisiY + 27); printf("Pembelian berhasil dicatat.");
-
-    PosisiX = 40, PosisiY = 10; // Posisi awal cetak struk pembelian
-
-    gotoxy(PosisiX, PosisiY);     printf("=== STRUK PEMBELIAN ===");
-    gotoxy(PosisiX, PosisiY + 2); printf("ID Pembelian      : %s", pembelian.idPembelian);
-    gotoxy(PosisiX, PosisiY + 3); printf("Tanggal Pembelian : %s", pembelian.tanggalPembelian);
-    gotoxy(PosisiX, PosisiY + 4); printf("Supplier          : %s", supplier.namaSpl);
-    gotoxy(PosisiX, PosisiY + 4); printf("Produk            : %s", produk.namaPrd);
-    gotoxy(PosisiX, PosisiY + 5); printf("Jumlah Barang     : %d", pembelian.totalPembelian);
-    gotoxy(PosisiX, PosisiY + 6); printf("Total Harga       : RP. %d", pembelian.totalHarga);
-    gotoxy(PosisiX, PosisiY + 7); printf("Metode Pembayaran : %s", pembelian.metodePembayaran);
-
-    fclose(fileSupplier);
-    fclose(fileProduk);
-    fclose(filePembelian);
-}
-
-void historyTransaksi() {
-    system("cls");
-
-    int PosisiX = 5, PosisiY = 3; // Posisi awal tampilan history transaksi
-
-    gotoxy(PosisiX, PosisiY);     printf("=== HISTORY TRANSAKSI PEMBELIAN ===");
-    gotoxy(PosisiX, PosisiY + 2); printf("ID Pembelian | Tanggal      | Nama Supplier      | Total Pembelian | Total Harga    | Metode Pembayaran");
-    gotoxy(PosisiX, PosisiY + 3); printf("--------------------------------------------------------------------------------------------------------");
-
-    filePembelian = fopen("../Database/dat/Pembelian.dat", "rb");
+    filePembelian = fopen("../Database/dat/Pembelian.dat", "ab+");
     if (filePembelian == NULL) {
         perror("Failed to open Pembelian.dat");
         return;
     }
 
-    int row = PosisiY + 5; // Posisi awal data transaksi
-    while (fread(&pembelian, sizeof(DTPembelian), 1, filePembelian) == 1) {
-        gotoxy(PosisiX, row);
-        printf("%-13s | %-12s | %-18s | %-15d | RP.%-10d | %-16s",
-               pembelian.idPembelian,
-               pembelian.tanggalPembelian,
-                supplier.namaSpl,   // Langsung panggil nama supplier dari struct pembelian
-               pembelian.totalPembelian,
-               pembelian.totalHarga,
-               pembelian.metodePembayaran);
-        row++; // Pindah ke baris berikutnya
+    // Cek ID terakhir transaksi
+    FILE *fileCheck = fopen("../Database/dat/Pembelian.dat", "rb");
+    if (fileCheck != NULL) {
+        while (fread(&pembelian, sizeof(pembelian), 1, fileCheck) == 1) {
+            strcpy(lastID, pembelian.idPembelian);
+        }
+        fclose(fileCheck);
     }
 
+    // Generate ID transaksi unik
+    if (sscanf(lastID, "PB%d", &lastNumber) == 1) {
+        lastNumber++;
+    } else {
+        lastNumber = 1;
+    }
+    snprintf(pembelian.idPembelian, sizeof(pembelian.idPembelian), "PB%d", lastNumber);
+
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan ID Barang");
+    gotoxy(PosisiX,11); printf("[      ]");
+    gotoxy(PosisiX+2,11); getteks(idItem, 4);
+    cleanKanan();
+
+    if (jenisPilihan == 1) {
+        fileProduk = fopen("../Database/dat/Produk.dat", "rb");
+        while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
+            if (strcmp(produk.idPrd, idItem) == 0) {
+                foundBarang = 1;
+                hargaBarang = produk.harga;
+                strcpy(namaBarang, produk.namaPrd); // Simpan nama produk
+                break;
+            }
+        }
+        fclose(fileProduk);
+    } else {
+        fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
+        while (fread(&aksessoris, sizeof(aksessoris), 1, fileAksessoris) == 1) {
+            if (strcmp(aksessoris.idAks, idItem) == 0) {
+                foundBarang = 2;
+                hargaBarang = aksessoris.harga;
+                strcpy(namaBarang, aksessoris.namaAks); // Simpan nama aksesoris
+                break;
+            }
+        }
+        fclose(fileAksessoris);
+    }
+
+    if (!foundBarang) {
+        showMessage("ATTENTION","DATA TIDAK DI TEMUKAN");
+        return;
+    }
+
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan jumlah barang");
+    gotoxy(PosisiX,11); printf("[   ]");
+    gotoxy(PosisiX+2,11); getnum(&jumlah, 1);
+    cleanKanan();
+
+    // Simpan data pembelian
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    snprintf(pembelian.tanggalPembelian, sizeof(pembelian.tanggalPembelian), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+
+    strcpy(pembelian.kategori, namaBarang);
+    strcpy(pembelian.idSupplier, supplier.idSpl);
+    pembelian.hargaSatuan = hargaBarang;
+    pembelian.totalPembelian = jumlah;
+    pembelian.totalHarga = hargaBarang * jumlah;
+    strcpy(pembelian.metodePembayaran, "Cash");
+
+    char hargaSatuan[20], totalHarga[20];
+    int gabunganHargaTotal = pembelian.hargaSatuan * pembelian.totalPembelian;
+    rupiah(pembelian.hargaSatuan, hargaSatuan);
+    rupiah(gabunganHargaTotal, totalHarga);
+
+    fwrite(&pembelian, sizeof(pembelian), 1, filePembelian);
+
+    // Menampilkan struk
+    cleanKiri();
+    gotoxy(batasKiri, 5); printf("=== [ DATA PEMBELIAN ] ==============");
+    gotoxy(batasKiri, 8); printf("ID Pembelian");
+    gotoxy(batasKiri+50, 8); printf("| %-40s|", pembelian.idPembelian);
+
+    gotoxy(batasKiri, 10); printf("Tanggal Pembelian");
+    gotoxy(batasKiri+50, 10); printf("| %-40s|", pembelian.tanggalPembelian);
+
+    gotoxy(batasKiri, 12); printf("Supplier");
+    gotoxy(batasKiri+50, 12); printf("| %-40s|", pembelian.idSupplier);
+
+    gotoxy(batasKiri, 14); printf("Barang");
+    gotoxy(batasKiri+50, 14); printf("| %-40s|", pembelian.kategori);
+
+    gotoxy(batasKiri, 16); printf("Jumlah Barang");
+    gotoxy(batasKiri+50, 16); printf("| %-40d|", pembelian.totalPembelian);
+
+    gotoxy(batasKiri, 18); printf("Harga Satuan");
+    gotoxy(batasKiri+50, 18); printf("| RP.%-37s|", hargaSatuan);
+
+    gotoxy(batasKiri, 20); printf("Total Harga");
+    gotoxy(batasKiri+50, 20); printf("| RP.%-37s|", totalHarga);
+
+    gotoxy(batasKiri, 22); printf("Metode Pembayaran");
+    gotoxy(batasKiri+50, 22); printf("| %-40s|", pembelian.metodePembayaran);
+
+    getchar(); getchar();
+    fclose(filePenjualan);
+}
+
+void historyTransaksi() {
+    int PosisiX = 130;
+    int batasKiri = 5;
+    int found = 0;
+    char idPenjualanCari[10];
+    int yTeks = 6;
+    int i = 1;
+    int pilihan;
+
+    cleanKiri();
+    filePembelian = fopen("../Database/dat/Pembelian.dat", "rb");
+    if (filePembelian == NULL) {
+        perror("Failed to open Pembelian.dat");
+        return;
+    }
+                // MENAMPILKAN KE LAYAR ISI DARI FILE
+    while (fread(&pembelian, sizeof(pembelian), 1, filePembelian) == 1) {
+        printTable(20, 100, 3, 35);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(20, 4); printf(" %-10s %-10s %-30s %-15s %-15s\n", "ID", "Supplier", "Barang", "Jumlah", "Total");
+        char total[20];
+        rupiah(pembelian.totalHarga, total);
+        gotoxy(20, yTeks); printf(" %-10s %-10s %-30s %-15d RP.%-12s\n",
+                            pembelian.idPembelian, pembelian.idSupplier, pembelian.kategori, pembelian.totalPembelian, total);
+        if (i % 35 == 0) {
+            getchar();
+            cleanKiri();
+        }
+        i++;
+        yTeks++;
+    }
+    getchar(); getchar();
+    cleanKanan();
+
+    // MENUTUP FILE
     fclose(filePembelian);
 
-    gotoxy(PosisiX, row + 2);
-    printf("Tekan sembarang tombol untuk melanjutkan...");
-    getchar();
+    // Pilihan untuk melihat detail transaksi
+    cleanKanan();
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Ingin Lihat Detail? (1 = iya)");
+    gotoxy(PosisiX,11); printf("[   ]");
+    gotoxy(PosisiX+2,11); getnum(&pilihan, 1);
+
+    if (pilihan == 1) {
+    // Buka kembali file untuk mencari transaksi yang sesuai
+    filePembelian = fopen("../Database/dat/Pembelian.dat", "rb");
+        cleanKanan();
+        SetColor(text2);
+        gotoxy(PosisiX, 10); printf("Masukkan ID Pembelian : [     ]");
+        gotoxy(PosisiX+26, 10); getteks(idPenjualanCari, 4);
+    if (filePembelian == NULL) {
+        perror("Failed to open Pembelian.dat");
+        return;
+    }
+
+    while (fread(&pembelian, sizeof(pembelian), 1, filePembelian) == 1) {
+        if (strcmp(pembelian.idPembelian, idPenjualanCari) == 0) {
+            found = 1;
+            break;
+        }
+    }
+    fclose(filePembelian);
+
+    if (!found) {
+        showMessage("ATTENTION", "TRANSAKSI TIDAK DI TEMUKAN");
+        return;
+    }
+
+        char hargaSatuan[20], totalHarga[20];
+        int gabunganHargaTotal = pembelian.hargaSatuan * pembelian.totalPembelian;
+        rupiah(pembelian.hargaSatuan, hargaSatuan);
+        rupiah(gabunganHargaTotal, totalHarga);
+
+        fwrite(&pembelian, sizeof(pembelian), 1, filePembelian);
+
+        // Menampilkan struk
+        cleanKiri();
+        gotoxy(batasKiri, 5); printf("=== [ DATA PEMBELIAN ] ==============");
+        gotoxy(batasKiri, 8); printf("ID Pembelian");
+        gotoxy(batasKiri+50, 8); printf("| %-40s|", pembelian.idPembelian);
+
+        gotoxy(batasKiri, 10); printf("Tanggal Pembelian");
+        gotoxy(batasKiri+50, 10); printf("| %-40s|", pembelian.tanggalPembelian);
+
+        gotoxy(batasKiri, 12); printf("Supplier");
+        gotoxy(batasKiri+50, 12); printf("| %-40s|", pembelian.idSupplier);
+
+        gotoxy(batasKiri, 14); printf("Barang");
+        gotoxy(batasKiri+50, 14); printf("| %-40s|", pembelian.kategori);
+
+        gotoxy(batasKiri, 16); printf("Jumlah Barang");
+        gotoxy(batasKiri+50, 16); printf("| %-40d|", pembelian.totalPembelian);
+
+        gotoxy(batasKiri, 18); printf("Harga Satuan");
+        gotoxy(batasKiri+50, 18); printf("| RP.%-37s|", hargaSatuan);
+
+        gotoxy(batasKiri, 20); printf("Total Harga");
+        gotoxy(batasKiri+50, 20); printf("| RP.%-37s|", totalHarga);
+
+        gotoxy(batasKiri, 22); printf("Metode Pembayaran");
+        gotoxy(batasKiri+50, 22); printf("| %-40s|", pembelian.metodePembayaran);
+
+        getchar(); getchar();
+        fclose(filePenjualan);
+    }
 }
 
 
 void CrudTransaksiPembelian() {
-    int pilihan;
+    int PosisiX = 135; // Posisi menu di layar
+    int PosisiY = 10;
+    int jarakMenu = 2; // Jarak antar menu
 
+    int menu = 1;   // Menu aktif (posisi awal)
+    int totalMenu = 3; // Total jumlah menu
+    int key;
+
+    char man[] = "T R A N S A K S I  P E M B E L I A N";
+    char space = ' ';
+
+    cleanKanan();
     do {
-        system("cls");
-        printf("Menu Pembelian Barang\n");
-        printf("1. Transaksi Pembelian\n");
-        printf("2. History Pembelian\n");
-        printf("0. Keluar\n");
-        printf("Pilihan: ");
-        scanf("%d", &pilihan);
+        // Menampilkan menu dengan indikasi pilihan aktif (>>)
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf(" %-37s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
 
-        switch (pilihan) {
-            case 1:
-                transaksiPembelian();
-                break;
-            case 2:
-                historyTransaksi();
-                break;
-            case 0:
-                printf("Keluar dari program.\n");
-                break;
-            default:
-                printf("Pilihan tidak valid!\n");
+        for (int i = 1; i <= totalMenu; i++) {
+            if (i == menu) { // Tambahkan tanda "<<<" di menu aktif
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
+            } else {
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
+            }
+
+            // Tampilkan menu
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
+            switch (i) {
+                case 1: printf("Tambah Transaksi"); break;
+                case 2: printf("Lihat Data"); break;
+                case 3: printf("Exit"); break;
+            }
         }
 
-        if (pilihan != 0) {
-            printf("\nTekan sembarang tombol untuk melanjutkan...");
-            getchar(); getchar(); // Untuk menunggu input sebelum kembali ke menu
+        // Membaca input keyboard
+        key = getch();
+        if (key == 224) { // Input arrow key di Windows
+            key = getch();
+            if (key == 72 && menu > 1) { // Arrow UP
+                menu--;
+            } else if (key == 80 && menu < totalMenu) { // Arrow DOWN
+                menu++;
+            }
+        } else if (key == 13) { // Tombol Enter
+            switch (menu) {
+                case 1: transaksiPembelian();
+                system("cls");
+                frame();
+                    break;
+                case 2: historyTransaksi();
+                system("cls");
+                frame();
+                    break;
+                case 3:
+                    system("cls");
+                    frame();
+                return;
+                default:
+                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
+                printf("Input tidak valid. Silakan coba lagi.\n");
+            }
         }
-
-    } while (pilihan != 0);
+    } while (1);
 }
 
 #endif //TRSK_PEMBELIAN_H

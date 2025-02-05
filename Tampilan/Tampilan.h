@@ -65,7 +65,7 @@ void cleanKanan() {
     char space = ' ';
     for (int i = 1; i <= 41; i++) {
         gotoxy(126, i);
-        printf("%-48c", space);
+        printf("%-46c", space);
     }
 }
 

@@ -4,352 +4,13 @@
 #include "Deklarasi.h"
 #include "../Tampilan/Tampilan.h"
 
-/*void inputSupplier(int n) {
-    system("cls");
-    templateUI();
-    cleanKiri();
-
-    char kodeSupplier[] = {"SPL"};
-    int idTerakhir = 0;
-    int batasKiri = 3;
-
-    fileSupplier = fopen("../Database/dat/Supplier.dat", "ab+");
-    if (fileSupplier == NULL) {
-        perror("Failed to open file");
-        return;
-    }
-
-    // Membaca file untuk mendapatkan id terakhir
-    while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
-        // Membaca bagian integer lalu di simpan pada variabel idTerakhir
-        sscanf(supplier.id, "%*[^0-9]%d", &idTerakhir);
-    }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
-
-    // Looping pembuatan id cabang
-    for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
-        // Generate ID otomatis
-        snprintf(supplier.id, sizeof(supplier.id), "%s%i", kodeSupplier, i);
-
-        // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
-        gotoxy(batasKiri, 3); printf("=MASUKKAN DATA SUPPLIER===========");
-        SetColorBlock(3,7);
-        gotoxy(batasKiri, 5); printf("ID Supplier");
-        gotoxy(batasKiri+50, 5); printf("| %-40s|", supplier.id);
-
-        gotoxy(batasKiri, 8); printf("Nama Supplier");
-        gotoxy(batasKiri+50, 8); printf("| %-40s|", " ");
-
-        gotoxy(batasKiri, 11); printf("Tanggal Lahir DD-MM-YYYY");
-        gotoxy(batasKiri+50, 11); printf("| %-40s|", " ");
-
-        gotoxy(batasKiri, 17); printf("No Telepon");
-        gotoxy(batasKiri+50, 17); printf("| %-40s|", " ");
-
-        gotoxy(batasKiri, 20); printf("Alamat");
-        gotoxy(batasKiri+50, 20); printf("| %-40s|", " ");
-
-        gotoxy(batasKiri, 26); printf("Status");
-        gotoxy(batasKiri+50, 26); printf("| %-40s|", "Aktif");
-
-        gotoxy(57, 8); getteks(supplier.namaSpl, 50);
-
-        gotoxy(57, 17); getteks(supplier.noTelp, 20);
-
-        gotoxy(57, 20); getteks(supplier.alamat, 50);
-
-        strcpy(supplier.status, "Aktif");
-
-        fwrite(&supplier, sizeof(supplier), 1, fileSupplier);
-    }
-    fclose(fileSupplier);
-}
-
-void readdataSupplierALL() {
-    cleanKiri();
-
-    char id[] = "ID";
-    char nama[] = "NAMA";
-    char alamat[] = "ALAMAT";
-    char noTelpn[] = "NO TELP";
-        char status[] = "STATUS";
-
-    int i = 1;
-    int yTeks = 4;
-
-    fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
-    if (fileSupplier == NULL) {
-        perror("Failed to open file");
-        return;
-    }
-
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColorBlock(3, 7);
-    gotoxy(3, 2);
-    printf(" %-8s   %-20s   %-15s   %-10s   %10s\n", id, nama, alamat, noTelpn, status);
-
-    while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-8s   %-20s   %-15s   %-10s   %10s\n", supplier.id, supplier.namaSpl, supplier.alamat, supplier.noTelp, supplier.status);
-
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
-            getchar(); // Wait for user input
-            cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-8s   %-20s   %-15s   %-10s   %10s\n", id, nama, alamat, noTelpn, status);
-        }
-        i++;
-        yTeks++;
-    }
-
-    fclose(fileKaryawan);
-}
-
-void CrudSupplier() {
-    int PosisiX = 115; // Posisi menu di layar
-    int PosisiY = 10;
-
-    int menu = 1;   // Menu aktif (posisi awal)
-    int totalMenu = 5; // Total jumlah menu
-    int key;
-    int n;
-
-    do {
-        cleanKanan();
-        frame();
-
-        // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
-        for (int i = 1; i <= totalMenu; i++) {
-            if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
-            } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("  ");
-            }
-
-            // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
-            switch (i) {
-                case 1: printf("Tambah Data Supplier"); break;
-                case 2: printf("Lihat Data Supplier"); break;
-                case 3: printf("Ubah Data Supplier"); break;
-                case 4: printf("Hapus Data Supplier"); break;
-                case 5: printf("EXIT PROGRAM"); break;
-            }
-        }
-
-        // Membaca input keyboard
-        key = getch();
-        if (key == 224) { // Input arrow key di Windows
-            key = getch();
-            if (key == 72 && menu > 1) { // Arrow UP
-                menu--;
-            } else if (key == 80 && menu < totalMenu) { // Arrow DOWN
-                menu++;
-            }
-        } else if (key == 13) { // Tombol Enter
-            switch (menu) {
-                case 1:
-                    cleanKanan();
-                    AdminMenuTambah(); break;
-                case 2:
-                    readdataSupplierALL(); break;
-                case 3: break;
-                case 4: break;
-                case 5:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
-                    printf("Program Terminated.\n");
-                    return;
-                default:
-                    gotoxy(PosisiX, PosisiY + totalMenu + 2);
-                    printf("Input tidak valid. Silakan coba lagi.\n");
-            }
-        }
-    } while (1);
-}*/
-
-/*void inputSupplier();
-void viewSupplier();
-void changeSuppplier();
-void deleteSupplier();
-
-void crudSupplier () {
-    /* DECLARATION #1#
-    int menu;
-
-    /* ALGORITHM #1#
-    system("cls");
-    do {
-    printf ("\n---- Menu Pilihan ----\n\n");
-    printf ("1. Tambah data Supplier\n");
-    printf ("2. Lihat data Supplier\n");
-    printf ("3. Ubah data Supplier\n");
-    printf ("4. Hapus data Supplier\n");
-    printf ("5. EXIT PROGRAM\n");
-    printf ("Pilih menu program:");
-    scanf  ("%d", &menu);
-
-        switch (menu) {
-            case 1:inputSupplier(); break;
-            case 2:viewSupplier(); break;
-            case 3:changeSuppplier(); break;
-            case 4:deleteSupplier();break;
-            case 5:
-                printf ("\nProgram Terminated\n");
-                system("cls"); break;
-            default: printf ("\nInvalid Input\n");
-        }
-    } while (menu != 5);
-    getch();
-}
-
-void inputSupplier() {
-    /* DECLARATION #1#
-
-    /* ALGORITHM #1#
-    printf ("\n---- Tambah Data Supplier ----\n\n");
-    fileSupplier = fopen("Supplier.dat", "ab");
-    printf("ID Supplier:");
-    scanf ("%s", &supplier.idSpl);
-    fflush(stdin);
-    while (strcmp(supplier.idSpl,"selesai")!=0) {
-        printf ("Nama Supplier :");
-        gets(supplier.namaSpl);
-        fflush(stdin);
-        printf (" Alamat :");
-        gets(supplier.alamat);
-        fflush(stdin);
-        printf (" No Telpon :");
-        scanf ("%d", &supplier.noTelp);
-        printf (" Status :");
-        scanf ("%d", &supplier.status);
-        fwrite (&supplier, sizeof(supplier), 1, fileSupplier);
-        printf ("\n");
-        printf ("ID Supplier:");  scanf("%s",&supplier.idSpl);  fflush(stdin);
-    }
-    printf("\n");
-    fclose (fileSupplier);
-}
-
-void viewSupplier() {
-    /* DECLARATION #1#
-
-    /* ALGORITHM #1#
-    fileSupplier = fopen("Supplier.dat", "rb");
-    if (!fileSupplier) {
-        printf ("File Not Found\n");
-        return;
-    }
-
-    printf ("\n---- Lihat Data Supplier ----\n\n");
-    while (fread(&supplier, sizeof(supplier), 1, fileSupplier)) {
-        printf ("ID Supplier   :%s\n", supplier.idSpl);
-        printf ("Nama Supplier :%s\n", supplier.namaSpl);
-        printf ("Alamat        :%s\n", supplier.alamat);
-        printf ("No Telpon     :%d\n", supplier.noTelp);
-        printf ("Status        :%d\n", supplier.status);
-
-        printf ("\n");
-    }
-    fclose (fileSupplier);
-}
-
-
-void changeSuppplier() {
-    /* DECLARATION #1#
-    Boolean found;
-    char idTarget[10];
-
-    /* ALGORITHM #1#
-    printf ("\n---- Ubah Data Supplier ----\n\n");
-    printf ("Masukkan ID Supplier:"); scanf ("%s", &idTarget);
-    fileSupplier = fopen("Supplier.dat", "rb");
-    tempSupplier = fopen("temp.dat", "wb");
-
-    found = False;
-    while (!found && !feof(fileSupplier)) {
-        fread(&supplier, sizeof(supplier), 1, fileSupplier);
-         if (strcmp(supplier.idSpl,idTarget)==0) {
-            found = True;
-        } else {
-            fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
-        }
-    }
-
-    if (found) {
-        printf ("Masukkan nama Supplier baru:"); scanf(" %[^\n]%*c", supplier.namaSpl);
-        printf("Alamat :"); scanf ("%[^\n]%*c", supplier.alamat);
-        printf (" No Telpon :"); scanf ("%d", &supplier.noTelp);
-        printf ("Status :"); scanf ("%d", &supplier.status);
-        fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
-        printf ("Data Berhasil Di Perbaharui\n");
-
-        while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
-            fread(&supplier, sizeof(supplier), 1, fileSupplier);
-            fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
-        }
-    } else {
-        printf ("\nID %d Tidak Ditemukan Di Dalam File\n", idTarget);
-    }
-    fclose (fileSupplier);
-    fclose (tempSupplier);
-
-    tempSupplier = fopen("temp.dat", "rb");
-    fileSupplier = fopen("Supplier.dat", "wb");
-    while (!feof(tempSupplier)) {
-        fread(&supplier, sizeof(supplier), 1, tempSupplier);
-        fwrite(&supplier, sizeof(supplier), 1, fileSupplier);
-    }
-    fclose (tempSupplier);
-    fclose (fileSupplier);
-
-    remove ("Supplier.dat");
-    rename("temp.dat", "Supplier.dat");
-}
-
-
-void deleteSupplier() {
-    /* DECLARATION #1#
-    Boolean found;
-    char idTarget[10];
-
-    /* ALGORITHM #1#
-    printf ("\n---- Hapus data kendaraan ----\n\n");
-    printf ("Masukkan ID Supplier:"); scanf ("%s", &idTarget);
-    fileSupplier = fopen("Supplier.dat", "rb");
-    tempSupplier = fopen("temp.dat", "wb");
-    found = False;
-    while (fread(&supplier, sizeof(supplier), 1, fileSupplier)) {
-        if (strcmp(supplier.idSpl,idTarget)==0) {
-            found = True;
-            printf ("\nData Berhasil Di Hapus\n");
-        } else {
-            fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
-        }
-    }
-
-    if (!found) {
-        printf ("Data Supplier tidak di temukan\n");
-    }
-    fclose (fileSupplier);
-    fclose (tempSupplier);
-
-    remove ("Supplier.dat");
-    rename("temp.dat", "Supplier.dat");
-}*/
-
 void inputSupplier(int n) {
     system("cls");
     templateUI();
-    cleanKiri();
 
     char kodeSupplier[] = {"SPL"};
     int idTerakhir = 0;
-    int batasKiri = 3;
+    int batasKiri = 5;
 
     fileSupplier = fopen("../Database/dat/Supplier.dat", "ab+");
     if (fileSupplier == NULL) {
@@ -362,7 +23,7 @@ void inputSupplier(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(supplier.idSpl, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
+    gotoxy(batasKiri, 2); SetColor(colorMainText);
 
     // Looping pembuatan id cabang
     for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
@@ -370,9 +31,8 @@ void inputSupplier(int n) {
         snprintf(supplier.idSpl, sizeof(supplier.idSpl), "%s%i", kodeSupplier, i);
 
         // Menampilkan Teks Untuk Input
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("=MASUKKAN DATA SUPPLIER===========");
-        SetColorBlock(3,7);
         gotoxy(batasKiri, 5); printf("ID Supplier");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", supplier.idSpl);
 
@@ -389,9 +49,9 @@ void inputSupplier(int n) {
         gotoxy(batasKiri, 17); printf("Status");
         gotoxy(batasKiri+50, 17); printf("| %-40s|", "Aktif");
 
-        gotoxy(55, 8); getteks(supplier.namaSpl, 50);
-        gotoxy(55, 11); getteks(supplier.alamat, 50);
-        gotoxy(55, 14); getno(supplier.noTelp, 13);
+        gotoxy(57, 8); getteks(supplier.namaSpl, 50);
+        gotoxy(57, 11); getteks(supplier.alamat, 50);
+        gotoxy(57, 14); getno(supplier.noTelp, 13);
         strcpy(supplier.status, "Aktif");
 
         fwrite(&supplier, sizeof(supplier), 1, fileSupplier);
@@ -409,7 +69,7 @@ void readdataSupplierALL() {
     char status[] = "STATUS";
 
     int i = 1;
-    int yTeks = 4;
+    int yTeks = 6;
 
     FILE *fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
     if (fileSupplier == NULL) {
@@ -417,48 +77,42 @@ void readdataSupplierALL() {
         return;
     }
 
-    printTable(3, 110, 1, 42);
-    gotoxy(0, 3);
-    SetColorBlock(3, 7);
-    gotoxy(3, 2);
-    printf(" %-8s   %-20s   %-20s   %-15s   %10s\n", id, nama, alamat, noTelpn, status);
 
     while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
-        gotoxy(3, yTeks);
-        printf(" %-8s   %-20s   %-20s   %-15s   %10s\n", supplier.idSpl, supplier.namaSpl, supplier.alamat, supplier.noTelp, supplier.status);
+        printTable(10, 105, 3, 38);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(10, 4);printf(" %-8s   %-20s   %-25s   %-15s   %10s\n", id, nama, alamat, noTelpn, status);
+        gotoxy(10,yTeks); printf(" %-8s   %-20s   %-25s   %-15s   %10s\n", supplier.idSpl, supplier.namaSpl, supplier.alamat, supplier.noTelp, supplier.status);
 
-        if (i % 40 == 0) {
-            printf("\n--- Press any key to continue ---\n");
-            getchar(); // Wait for user input
+        if (i % 35 == 0) {
+            getchar();
             cleanKiri();
-            yTeks = 4; // Reset yTeks after clearing screen
-            gotoxy(3, 2);
-            printf(" %-8s   %-20s   %-20s   %-15s   %10s\n", id, nama, alamat, noTelpn, status);
+            yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
         }
         i++;
         yTeks++;
     }
-
-    fclose(fileKaryawan);
+    fclose(fileSupplier);
 }
 
 
 void readDetailSupplier() {
     int batasKiri = 3;
     char idSplr[10];
-    system("cls");
+    cleanKanan();
+    cleanKiri();
     retype:
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", "W E L C O M E  A D M I N");
-    gotoxy(115, 41); printf("%38c", ' ');
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(124, 11); printf("Masukkan ID Supplier");
-    gotoxy(129, 15); printf("[        ]");
+    SetColor(colorHeadText);
+    gotoxy(130, 2); printf("   %-35s", "W E L C O M E  A D M I N");
+    gotoxy(130, 41); printf("%38c", ' ');
+    gotoxy(130, 5); SetColor(text2);
+    gotoxy(135, 13); printf("Masukkan ID Supplier");
+    gotoxy(135, 15); printf("[        ]");
 
     readdataSupplierALL();
-    frame();
 
-    gotoxy(131, 15); getteks(idSplr, 4);
+    gotoxy(137, 15); getteks(idSplr, 4);
     cleanKiri();
 
     int i = 1;
@@ -466,7 +120,7 @@ void readDetailSupplier() {
     //Membuka file dengan mode rb
     fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
 
-    gotoxy(0, 3); SetColorBlock(3,7);
+    gotoxy(0, 3); SetColor(colorMainText);
     while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
         if (strcmp(idSplr, supplier.idSpl) == 0) {
             found = 1;
@@ -477,6 +131,7 @@ void readDetailSupplier() {
 
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Supplier");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", supplier.idSpl);
 
@@ -489,14 +144,13 @@ void readDetailSupplier() {
         gotoxy(batasKiri, 14); printf("No Telepon");
         gotoxy(batasKiri+50, 14); printf("| %-40s|", supplier.noTelp);
 
-        gotoxy(batasKiri, 26); printf("Status");
-        gotoxy(batasKiri+50, 26); printf("| %-40s|", karyawan.status);
+        gotoxy(batasKiri, 17); printf("Status");
+        gotoxy(batasKiri+50, 17); printf("| %-40s|", karyawan.status);
     } else {
         showMessage("ALERT!", "ID Supplier tidak ditemukan");
-        gotoxy(131, 15); printf("       ");
         goto retype;
     }
-    gotoxy(123, 30); printf("Press ENTER to back...");
+    gotoxy(135, 30); printf("Press ENTER to back...");
     getchar();
     //Menutup file setelah membaca
     fclose(fileSupplier);
@@ -506,15 +160,15 @@ void readDetailSupplier() {
 void updateSupplier() {
     int found;
     found = 0;
-    char No[10];
+    char idSupplier[10];
     int batasKiri = 5;
 
     retype:
     cleanKanan();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
     readdataSupplierALL();
-    gotoxy(115+8, 10); printf("ID Supplier : [   ]");
-    gotoxy(row+17, 15); getteks(No, 6);
+    gotoxy(135, 5); SetColor(text2);
+    gotoxy(135, 10); printf("ID Supplier : [      ]");
+    gotoxy(149, 10); getteks(idSupplier, 4);
 
     //Membuka file asli dengan mode rb
     fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
@@ -523,7 +177,7 @@ void updateSupplier() {
     //Pencarian data dalam file menggunakan loopung
     while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(No, supplier.idSpl) == 0) {
+        if (strcmp(idSupplier, supplier.idSpl) == 0) {
             found = 1;
             break;
         } else {
@@ -534,6 +188,7 @@ void updateSupplier() {
     //Proses lanjutan setelah data ditemukan
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 3); printf("ID Supplier");
         gotoxy(batasKiri+50, 3); printf("| %-40s|", supplier.idSpl);
 
@@ -550,9 +205,9 @@ void updateSupplier() {
         gotoxy(batasKiri+50, 7); printf("| %-40s|", supplier.status);
 
         // MENAMPILKAN TEKS UNTUK INPUT
-        SetColorBlock(3,7);
+        SetColor(colorHeadText);
         gotoxy(batasKiri, 13); printf("=MASUKKAN DATA YANG BARU===========");
-        SetColorBlock(3,7);
+        SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Supplier");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", supplier.idSpl);
 
@@ -583,7 +238,7 @@ void updateSupplier() {
         fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
 
         if (doaction("UBAH DATA") == 1) {
-            strcpy(supplier.idSpl, No);
+            strcpy(supplier.idSpl, idSupplier);
             strcpy(supplier.namaSpl, namTemp);
             strcpy(supplier.noTelp, tlpTemp);
             strcpy(supplier.alamat, alamatTemp);
@@ -600,7 +255,6 @@ void updateSupplier() {
         }
     } else {
         showMessage("ALERT!", "ID Supplier tidak ditemukan");
-        gotoxy(row + 17, 15); printf("       ");
         goto retype;
     }
     fclose(fileSupplier);
@@ -610,16 +264,21 @@ void updateSupplier() {
 void deleteDataSupplier() {
     int found;
     found = 0;
-    char No[10];
+    char idSupplier[10];
     int batasKiri = 5;
+    int PosisiX = 135;
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
 
     retype:
     cleanKanan();
-    gotoxy(115+12, 5); SetColorBlock(3,7);
     readdataSupplierALL();
-    gotoxy(115+8, 10); printf("ID Supplier : [   ]");
-    gotoxy(row+17, 15); getteks(No, 6);
-
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("ID Supplier : [      ]");
+    gotoxy(PosisiX+16, 10); getteks(idSupplier, 4);
     //Membuka file asli dengan mode rb
     fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
     //Membuka file temporary dengan mode wb
@@ -627,7 +286,7 @@ void deleteDataSupplier() {
     //Pencarian data dalam file menggunakan loopung
     while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
-        if (strcmp(No, supplier.idSpl) == 0) {
+        if (strcmp(idSupplier, supplier.idSpl) == 0) {
             cleanKiri();
             gotoxy(batasKiri, 5); printf("ID Supplier");
             gotoxy(batasKiri+50, 5); printf("| %-40s|", supplier.idSpl);
@@ -641,7 +300,7 @@ void deleteDataSupplier() {
             gotoxy(batasKiri, 14); printf("No Telepon");
             gotoxy(batasKiri+50, 14); printf("| %-40d|", supplier.noTelp);
 
-            gotoxy(batasKiri, 14); printf("Status");
+            gotoxy(batasKiri, 17); printf("Status");
             gotoxy(batasKiri+50, 17); printf("| %-40s|", supplier.status);
 
             getchar();
@@ -662,7 +321,6 @@ void deleteDataSupplier() {
     }
     if (found == 0) {
         showMessage("ALERT!", "ID Supplier tidak ditemukan");
-        gotoxy(row + 17, 15); printf("       ");
         goto retype;
     }
     //Menutup file asli dan file temporary setelah digunakan
@@ -671,17 +329,19 @@ void deleteDataSupplier() {
 }
 
 void MenuAddSupplier() {
-    system("cls");
-    frame();
+    cleanKanan();
+    int PosisiX = 135;
 
     int n;
-    char Admin[] = "W E L C O M E  A D M I N";
+    char man[] = "W E L C O M E  A D M I N";
     char space = " ";
-    gotoxy(115, 2); SetColorBlock(3,7);printf(" %-35s", Admin);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(115+12, 5); SetColorBlock(3,7);
-    gotoxy(115+8, 10); printf("Banyaknya data : [   ]");
-    gotoxy(115+27, 10); getnum(&n, 1);
+
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 10); printf("Banyaknya data : [   ]");
+    gotoxy(PosisiX+19, 10); getnum(&n, 1);
 
     inputSupplier(n);
     system("cls");
@@ -689,13 +349,16 @@ void MenuAddSupplier() {
 }
 
 void menuReadSupplier() {
+    cleanKanan();
+    int PosisiX = 135;
     char man[] = "W E L C O M E  A D M I N";
     char space = ' ';
 
-    gotoxy(115, 2); SetColorBlock(3,7); printf("   %-35s", man);
-    gotoxy(115, 41); printf("%38c", space);
-    gotoxy(127, 5); SetColorBlock(3,7);
-    gotoxy(123, 35); printf("Press ENTER to next...");
+    SetColor(colorHeadText);
+    gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+    gotoxy(PosisiX - 5, 40); printf("%38c", space);
+    SetColor(text2);
+    gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataSupplierALL();
     getch();
     if (lihatDetil() == 1) {
@@ -709,9 +372,9 @@ void menuUpdateSupplier() {
     //Memanggil prosedur pencarian id kota
     updateSupplier();
     //Membuka file asli dengan mode wb
-    fileKaryawan = fopen("../Database/dat/Supplier.dat", "wb");
+    fileSupplier = fopen("../Database/dat/Supplier.dat", "wb");
     //Membuka file temporary dengan mode rb
-    tempKaryawan = fopen("../Database/Temp/SupplierTemp.dat", "rb");
+    tempSupplier = fopen("../Database/Temp/SupplierTemp.dat", "rb");
 
     //Proses menyalin kembali semua data dari file temporary ke file asli
     while (fread(&supplier, sizeof(supplier), 1, tempSupplier)==1) {
@@ -728,9 +391,9 @@ void menuDeleteSupplier() {
     //Memanggil prosedur pencarian id kota
     deleteDataSupplier();
     //Membuka file asli dengan mode wb
-    fileKaryawan = fopen("../Database/dat/Supplier.dat", "wb");
+    fileSupplier = fopen("../Database/dat/Supplier.dat", "wb");
     //Membuka file temporary dengan mode rb
-    tempKaryawan = fopen("../Database/Temp/SupplierTemp.dat", "rb");
+    tempSupplier = fopen("../Database/Temp/SupplierTemp.dat", "rb");
 
     //Proses menyalin kembali semua data dari file temporary ke file asli
     while (fread(&supplier, sizeof(supplier), 1, tempSupplier)==1) {
@@ -744,26 +407,35 @@ void menuDeleteSupplier() {
 }
 
 void crudSupplier() {
-    int PosisiX = 115; // Posisi menu di layar
+    int PosisiX = 135; // Posisi menu di layar
     int PosisiY = 10;
+    int jarakMenu = 2;
 
     int menu = 1;   // Menu aktif (posisi awal)
     int totalMenu = 5; // Total jumlah menu
     int key;
 
-    cleanKanan();
+    char man[] = "W E L C O M E  A D M I N";
+    char space = ' ';
+
+    system("cls");
+    frame();
+
     do {
         // Menampilkan menu dengan indikasi pilihan aktif (>>)
-        gotoxy(PosisiX, PosisiY - 2); printf("---- Menu Pilihan ----\n");
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
         for (int i = 1; i <= totalMenu; i++) {
             if (i == menu) { // Tambahkan tanda ">>" di menu aktif
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("<<<");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("<<<");
             } else {
-                gotoxy(PosisiX + 22, PosisiY + i - 1); printf("   ");
+                gotoxy(PosisiX + 22, PosisiY + (i - 1) * jarakMenu); printf("   ");
             }
 
             // Tampilkan menu
-            gotoxy(PosisiX, PosisiY + i - 1);
+            gotoxy(PosisiX, PosisiY + (i - 1) * jarakMenu);
             switch (i) {
                 case 1: printf("Tambah Data Supplier"); break;
                 case 2: printf("Lihat Data Supplier"); break;
@@ -786,7 +458,6 @@ void crudSupplier() {
         } else if (key == 13) { // Tombol Enter
             switch (menu) {
                 case 1:
-                    cleanKanan();
                     MenuAddSupplier(); break;
                 case 2:
                     menuReadSupplier(); break;
