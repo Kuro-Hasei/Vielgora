@@ -35,8 +35,8 @@ void inputMember(int n) {
         snprintf(member.id_Member, sizeof(member.id_Member), "%s%i", kodeMember, i);
 
         // Menampilkan Teks Untuk Input
-        SetColor(colorMainText);
-        gotoxy(batasKiri, 3); printf("=MASUKKAN DATA Member===========");
+        SetColor(colorHeadText);
+        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA MEMBER ] ===========");
         SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Member");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", member.id_Member);
@@ -115,11 +115,11 @@ void readDetailMember() {
     gotoxy(130, 41); printf("%38c", ' ');
     SetColor(text2);
     gotoxy(135, 13); printf("Masukkan ID Member");
-    gotoxy(135, 15); printf("[        ]");
+    gotoxy(135, 15); printf("[       ]");
 
     readdataMemberINJS();
 
-    gotoxy(137, 15); getteks(idMmbr, 4);
+    gotoxy(137, 15); getteks(idMmbr, 5);
     cleanKiri();
 
     int i = 1;
@@ -127,7 +127,7 @@ void readDetailMember() {
     //Membuka file dengan mode rb
     fileMember = fopen("../Database/dat/Member.dat", "rb");
 
-    gotoxy(0, 3); SetColorBlock(3,7);
+    gotoxy(0, 3); SetColor(colorHeadText);
     while (fread(&member, sizeof(member), 1, fileMember) == 1) {
         if (strcmp(idMmbr, member.id_Member) == 0) {
             found = 1;
@@ -138,6 +138,7 @@ void readDetailMember() {
 
     if (found == 1) {
         cleanKiri();
+        SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Member");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", member.id_Member);
 
@@ -174,9 +175,10 @@ void updateMember() {
 
     retype:
     cleanKanan();
+    readdataMemberINJS();
     gotoxy(135, 5); SetColor(text2);
-    gotoxy(135, 10); printf("ID Member : [      ]");
-    gotoxy(149, 10); getteks(No, 4);
+    gotoxy(135, 10); printf("ID Member : [       ]");
+    gotoxy(149, 10); getteks(No, 5);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -219,7 +221,7 @@ void updateMember() {
 
         // MENAMPILKAN TEKS UNTUK INPUT
         SetColor(colorHeadText);
-        gotoxy(batasKiri, 13); printf("=MASUKKAN DATA YANG BARU===========");
+        gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
         SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Member");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", member.id_Member);
@@ -312,8 +314,8 @@ void deleteDataMember() {
     gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
     gotoxy(PosisiX - 5, 40); printf("%38c", space);
     SetColor(text2);
-    gotoxy(PosisiX, 10); printf("ID Produk : [      ]");
-    gotoxy(PosisiX+14, 10); getteks(idMember, 4);
+    gotoxy(PosisiX, 10); printf("ID Member : [       ]");
+    gotoxy(PosisiX+14, 10); getteks(idMember, 5);
 
     //Membuka file asli dengan mode rb
     fileMember = fopen("../Database/dat/Member.dat", "rb");
@@ -359,7 +361,7 @@ void deleteDataMember() {
     }
     if (found == 0) {
         showMessage("ALERT!", "ID Member tidak ditemukan");
-        return;
+        goto retype;
     }
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileMember);
@@ -399,9 +401,9 @@ void menuReadMember() {
     gotoxy(PosisiX, 35); printf("Press ENTER to next...");
     readdataMemberINJS();
     getch();
-    if (lihatDetil() == 1) {
+    /*if (lihatDetil() == 1) {
         readDetailMember();
-    }
+    }*/
     system("cls");
     frame();
 }

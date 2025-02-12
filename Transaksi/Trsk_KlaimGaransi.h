@@ -1,15 +1,15 @@
 #ifndef TRSK_KLAIMGARANSI_H
 #define TRSK_KLAIMGARANSI_H
 
-// MAAF KAK UNTUK TRANSAKSI KLAIM GARANSI TIDAK SELESAI DENGAN SEPENUHNYA DI KARENAKAN SAYA BERNIAT
-// UNTUK MERUBAH DATANYA AGAR DAPAT LEBIH MASUK DENGAN KODINGAN YANG LAIN
-// SEKALI LAGI SAYA MINTA MAAF
 
 void inputKlaimGaransi() {
-    system("cls");
-    templateUI();
-    int lastNumber = 0;
-    char lastID[10];
+    cleanKanan();
+    cleanKiri();
+    int PosisiX = 130;
+    int batasKiri = 5;
+    char lastID[10], idPenjualan[10];
+    int lastNumber = 0, i = 1, yTeks = 6;
+    int foundPenjualan = 0;
 
     fileKlaimGaransi = fopen("../Database/dat/KlaimGaransi.dat", "ab+");
     if (fileKlaimGaransi == NULL) {
@@ -34,35 +34,154 @@ void inputKlaimGaransi() {
     }
     snprintf(klaimGaransi.idKlaimGaransi, sizeof(klaimGaransi.idKlaimGaransi), "KG%d", lastNumber);
 
-    // Input tanggal klaim garansi
+    filePenjualan = fopen("../Database/dat/Penjualan.dat", "rb");
+    if (filePenjualan == NULL) {
+        perror("Gagal membuka file Penjualan.dat");
+        return;
+    }
+
+    // MENAMPILKAN KE LAYAR ISI DARI FILE
+    while (fread(&penjualan, sizeof(penjualan), 1, filePenjualan) == 1) {
+        printTable(20, 100, 3, 35);
+        gotoxy(0, 6); SetColor(colorScText);
+        gotoxy(20, 4); printf(" %-10s %-30s %-15s %-15s\n", "ID", "Barang", "Jumlah", "Total");
+        char total[20];
+        rupiah(penjualan.totalHarga, total);
+        gotoxy(20, yTeks); printf(" %-10s %-30s %-15d RP.%-12s\n",
+                            penjualan.idPenjualan, penjualan.kategori, penjualan.totalPenjualan, total);
+        if (i % 35 == 0) {
+            getchar();
+            cleanKiri();
+        }
+        i++;
+        yTeks++;
+    } getchar();
+    cleanKanan();
+
+    // MENUTUP FILE
+    fclose(filePenjualan);
+
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan ID Penjualan: ");
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idPenjualan, 5);
+
+    filePenjualan = fopen("../Database/dat/Penjualan.dat", "rb");
+    // Mencari ID Penjualan
+    while (fread(&penjualan, sizeof(penjualan), 1, filePenjualan) == 1) {
+        if (strcmp(penjualan.idPenjualan, idPenjualan) == 0) {
+            strcpy(klaimGaransi.namaProduk, penjualan.kategori);
+            foundPenjualan = 1;
+            break;
+        }
+    } fclose(filePenjualan);
+
+    if (!foundPenjualan) {
+        showMessage("ATTENTION", "ID PENJUALAN TIDAK DITEMUKAN");
+        return;
+    }
+
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     snprintf(klaimGaransi.tanggalKlaimGaransi, sizeof(klaimGaransi.tanggalKlaimGaransi), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
 
-    // Input deskripsi masalah
-    SetColor(text2);
-    gotoxy(5,5);printf("Masukkan deskripsi masalah: ");
-    getchar(); // Membersihkan buffer
-    gotoxy(5,6); fgets(klaimGaransi.deskripsiMasalah, sizeof(klaimGaransi.deskripsiMasalah), stdin);
-    klaimGaransi.deskripsiMasalah[strcspn(klaimGaransi.deskripsiMasalah, "\n")] = 0; // Menghapus newline
+    // Input tanggal klaim garansi
+    time_t sekarang;
+    time(&sekarang);
 
-    // Simpan data ke file
+    // Parsing tanggal penjualan dari string ke struct tm
+    struct tm expire = {0};
+
+    // Debugging: pastikan string tanggal tidak kosong
+    if (strlen(penjualan.tanggalPenjualan) == 0) {
+        showMessage("ERROR", "Tanggal Penjualan Kosong!");
+        return;
+    }
+
+    // Parsing tanggal
+    int parsed = sscanf(penjualan.tanggalPenjualan, "%d-%d-%d", &expire.tm_mday, &expire.tm_mon, &expire.tm_year);
+    if (parsed != 3) {
+        showMessage("ERROR", "Format tanggal penjualan salah");
+        return;
+    }
+
+    // Sesuaikan format struct tm
+    expire.tm_year -= 1900; // Tahun dihitung sejak 1900
+    expire.tm_mon -= 1;     // Bulan dimulai dari 0
+    expire.tm_hour = 0;
+    expire.tm_min = 0;
+    expire.tm_sec = 0;
+
+    // Validasi rentang nilai
+    if (expire.tm_year < 70 || expire.tm_year > 200) {
+        showMessage("ERROR", "Tahun tidak valid");
+        return;
+    }
+    if (expire.tm_mon < 0 || expire.tm_mon > 11) {
+        showMessage("ERROR", "Bulan tidak valid");
+        return;
+    }
+    if (expire.tm_mday < 1 || expire.tm_mday > 31) {
+        showMessage("ERROR", "Hari tidak valid");
+        return;
+    }
+
+    // Tambahkan durasi garansi dalam bulan
+    expire.tm_mon += penjualan.garansi;
+    while (expire.tm_mon >= 12) {
+        expire.tm_mon -= 12;
+        expire.tm_year += 1;
+    }
+
+    // Konversi ke time_t
+    time_t kadaluarsa = mktime(&expire);
+    if (kadaluarsa == -1) {
+        showMessage("ERROR", "Gagal menghitung waktu kadaluarsa");
+        return;
+    }
+
+    // Tampilkan hasil debugging
+    /*gotoxy(PosisiX,10); printf("Sekarang: %s", ctime(&sekarang));
+    gotoxy(PosisiX,11); printf("Kadaluarsa: %s", ctime(&kadaluarsa));*/
+
+    // Cek apakah garansi masih berlaku
+    if (sekarang <= kadaluarsa) {
+        strcpy(klaimGaransi.status, "Diterima");
+    } else {
+        strcpy(klaimGaransi.status, "Ditolak");
+    }
+
     fwrite(&klaimGaransi, sizeof(klaimGaransi), 1, fileKlaimGaransi);
-    fclose(fileKlaimGaransi);
 
+    // Menampilkan struk
     cleanKiri();
     SetColor(colorHeadText);
-    gotoxy(5,5); printf("Data klaim garansi berhasil disimpan!");
+    gotoxy(batasKiri, 7); printf("=== [ DATA KLAIM GARANSI ] ==============");
     SetColor(text2);
-    gotoxy(5,7); printf("ID Klaim Garansi    : %s", klaimGaransi.idKlaimGaransi);
-    gotoxy(5,9); printf("Tanggal Klaim Garansi: %s", klaimGaransi.tanggalKlaimGaransi);
-    gotoxy(5,11); printf("Deskripsi Masalah   : %s", klaimGaransi.deskripsiMasalah);
-    getchar();
+    gotoxy(batasKiri, 10); printf("ID Klaim Garansi");
+    gotoxy(batasKiri+50, 10); printf("| %-40s|", klaimGaransi.idKlaimGaransi);
+
+    gotoxy(batasKiri, 12); printf("Nama Barang");
+    gotoxy(batasKiri+50, 12); printf("| %-40s|", klaimGaransi.namaProduk);
+
+    gotoxy(batasKiri, 14); printf("Tanggal Klaim");
+    gotoxy(batasKiri+50, 14); printf("| %-40s|", klaimGaransi.tanggalKlaimGaransi);
+
+    gotoxy(batasKiri, 16); printf("Status");
+    gotoxy(batasKiri+50, 16); printf("| %-40s|", klaimGaransi.status);
+    getchar(); getchar();
+
+    fclose(fileKlaimGaransi);
 }
 
 void lihatKlaimGaransi() {
-    int yTeks = 6;
+    int PosisiX = 130;
+    int batasKiri = 5;
+    int found = 0;
+    char idPenjualanCari[10];
+    int yTeks = 0;
     int i = 1;
+    int pilihan;
 
     fileKlaimGaransi = fopen("../Database/dat/KlaimGaransi.dat", "rb");
     if (fileKlaimGaransi == NULL) {
@@ -71,20 +190,73 @@ void lihatKlaimGaransi() {
     }
 
     cleanKiri();
+    yTeks = 6;
     while (fread(&klaimGaransi, sizeof(klaimGaransi), 1, fileKlaimGaransi) == 1) {
-        printTable(10, 110, 3, 35);
+        printTable(20, 100, 3, 35);
         gotoxy(0, 6); SetColor(colorScText);
-        gotoxy(20, 4); printf(" %-15s %-15s %-50s\n", "ID", "Tanggal", "Keluhan");
-        gotoxy(20, yTeks); printf(" %-15s %-15s %-50s\n", klaimGaransi.idKlaimGaransi, klaimGaransi.tanggalKlaimGaransi, klaimGaransi.deskripsiMasalah);
-        if (i % 35 == 0) {
+        gotoxy(20, 4); printf(" %-10s %-30s %-25s %-15s\n", "ID", "NAMA", "TANGGAL KLAIM", "STATUS");
+        gotoxy(20, yTeks); printf(" %-10s %-30s %-25s %-15s\n", klaimGaransi.idKlaimGaransi, klaimGaransi.namaProduk, klaimGaransi.tanggalKlaimGaransi, klaimGaransi.status);
+        if (i % 30 == 0) {
             getchar();
             cleanKiri();
+            yTeks = 6;
         }
         i++;
         yTeks++;
-    }
-    getchar(); getchar();
+    }getchar();
     cleanKanan();
+    fclose(fileKlaimGaransi);
+
+    cleanKanan();
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Ingin Lihat Detail? (1 = iya)");
+    gotoxy(PosisiX,11); printf("[   ]");
+    gotoxy(PosisiX+2,11); getnum(&pilihan, 1);
+
+    if (pilihan == 1) {
+        // Buka kembali file untuk mencari transaksi yang sesuai
+        fileKlaimGaransi = fopen("../Database/dat/KlaimGaransi.dat", "rb");
+        cleanKanan();
+        SetColor(text2);
+        gotoxy(PosisiX, 10); printf("Masukkan ID Transaksi : [      ]");
+        gotoxy(PosisiX+26, 10); getteks(idPenjualanCari, 5);
+        if (fileKlaimGaransi == NULL) {
+            perror("Failed to open KlaimGaransi.dat");
+            return;
+        }
+    }
+
+    while (fread(&klaimGaransi, sizeof(klaimGaransi), 1, fileKlaimGaransi) == 1) {
+        if (strcmp(klaimGaransi.idKlaimGaransi, idPenjualanCari) == 0) {
+            found = 1;
+            break;
+        }
+    }
+    fclose(fileKlaimGaransi);
+
+    if (!found) {
+        showMessage("ATTENTION", "ID Klaim Garansi Tidak DItemukan");
+        return;
+    }
+
+    // Menampilkan struk
+    cleanKiri();
+    SetColor(colorHeadText);
+    gotoxy(batasKiri, 7); printf("=== [ DATA KLAIM GARANSI ] ==============");
+    SetColor(text2);
+    gotoxy(batasKiri, 10); printf("ID Klaim Garansi");
+    gotoxy(batasKiri+50, 10); printf("| %-40s|", klaimGaransi.idKlaimGaransi);
+
+    gotoxy(batasKiri, 12); printf("Nama Barang");
+    gotoxy(batasKiri+50, 12); printf("| %-40s|", klaimGaransi.namaProduk);
+
+    gotoxy(batasKiri, 14); printf("Tanggal Klaim");
+    gotoxy(batasKiri+50, 14); printf("| %-40s|", klaimGaransi.tanggalKlaimGaransi);
+
+    gotoxy(batasKiri, 16); printf("Status");
+    gotoxy(batasKiri+50, 16); printf("| %-40s|", klaimGaransi.status);
+    getchar(); getchar();
+
     fclose(fileKlaimGaransi);
 }
 
@@ -154,5 +326,6 @@ void CrudKlaimGaransi() {
         }
     } while (1);
 }
+
 
 #endif //TRSK_KLAIMGARANSI_H

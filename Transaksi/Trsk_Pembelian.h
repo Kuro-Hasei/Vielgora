@@ -13,8 +13,8 @@ void transaksiPembelian() {
     readdataSupplierALL();
     SetColor(text2);
     gotoxy(PosisiX,10); printf("Masukkan ID Supplier: ");
-    gotoxy(PosisiX,11); printf("[      ]");
-    gotoxy(PosisiX+2,11); getteks(idSupplier, 4);
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idSupplier, 5);
     cleanKanan();
 
     // Buka file karyawan dan cari ID
@@ -91,8 +91,14 @@ void transaksiPembelian() {
 
     SetColor(text2);
     gotoxy(PosisiX,10); printf("Masukkan ID Barang");
-    gotoxy(PosisiX,11); printf("[      ]");
-    gotoxy(PosisiX+2,11); getteks(idItem, 4);
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idItem, 5);
+    cleanKanan();
+
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan jumlah barang");
+    gotoxy(PosisiX,11); printf("[   ]");
+    gotoxy(PosisiX+2,11); getnum(&jumlah, 1);
     cleanKanan();
 
     if (jenisPilihan == 1) {
@@ -101,7 +107,14 @@ void transaksiPembelian() {
             if (strcmp(produk.idPrd, idItem) == 0) {
                 foundBarang = 1;
                 hargaBarang = produk.harga;
+                produk.quantity += jumlah;
                 strcpy(namaBarang, produk.namaPrd); // Simpan nama produk
+
+                // Geser pointer file ke posisi yang benar
+                fseek(fileProduk, -sizeof(produk), SEEK_CUR);
+
+                // Tulis ulang data yang sudah diubah
+                fwrite(&produk, sizeof(produk), 1, fileProduk);
                 break;
             }
         }
@@ -112,7 +125,14 @@ void transaksiPembelian() {
             if (strcmp(aksessoris.idAks, idItem) == 0) {
                 foundBarang = 2;
                 hargaBarang = aksessoris.harga;
+                aksessoris.quantity += jumlah;
                 strcpy(namaBarang, aksessoris.namaAks); // Simpan nama aksesoris
+
+                // Geser pointer file ke posisi yang benar
+                fseek(fileAksessoris, -sizeof(aksessoris), SEEK_CUR);
+
+                // Tulis ulang data yang sudah diubah
+                fwrite(&aksessoris, sizeof(aksessoris), 1, fileAksessoris);
                 break;
             }
         }
@@ -123,12 +143,6 @@ void transaksiPembelian() {
         showMessage("ATTENTION","DATA TIDAK DI TEMUKAN");
         return;
     }
-
-    SetColor(text2);
-    gotoxy(PosisiX,10); printf("Masukkan jumlah barang");
-    gotoxy(PosisiX,11); printf("[   ]");
-    gotoxy(PosisiX+2,11); getnum(&jumlah, 1);
-    cleanKanan();
 
     // Simpan data pembelian
     time_t t = time(NULL);
@@ -177,7 +191,7 @@ void transaksiPembelian() {
     gotoxy(batasKiri+50, 22); printf("| %-40s|", pembelian.metodePembayaran);
 
     getchar(); getchar();
-    fclose(filePenjualan);
+    fclose(filePembelian);
 }
 
 void historyTransaksi() {
@@ -185,19 +199,21 @@ void historyTransaksi() {
     int batasKiri = 5;
     int found = 0;
     char idPenjualanCari[10];
-    int yTeks = 6;
+    int yTeks = 0;
     int i = 1;
     int pilihan;
 
-    cleanKiri();
     filePembelian = fopen("../Database/dat/Pembelian.dat", "rb");
     if (filePembelian == NULL) {
         perror("Failed to open Pembelian.dat");
         return;
     }
-                // MENAMPILKAN KE LAYAR ISI DARI FILE
+
+    cleanKiri();
+    // MENAMPILKAN KE LAYAR ISI DARI FILE
+    yTeks = 6;
     while (fread(&pembelian, sizeof(pembelian), 1, filePembelian) == 1) {
-        printTable(20, 100, 3, 35);
+        printTable(20, 105, 3, 35);
         gotoxy(0, 6); SetColor(colorScText);
         gotoxy(20, 4); printf(" %-10s %-10s %-30s %-15s %-15s\n", "ID", "Supplier", "Barang", "Jumlah", "Total");
         char total[20];
@@ -207,18 +223,15 @@ void historyTransaksi() {
         if (i % 35 == 0) {
             getchar();
             cleanKiri();
+            yTeks = 6;
         }
         i++;
         yTeks++;
-    }
-    getchar(); getchar();
+    } getchar();
     cleanKanan();
-
-    // MENUTUP FILE
     fclose(filePembelian);
 
-    // Pilihan untuk melihat detail transaksi
-    cleanKanan();
+    // Pilihan untuk melihat detail transaksi=
     SetColor(text2);
     gotoxy(PosisiX,10); printf("Ingin Lihat Detail? (1 = iya)");
     gotoxy(PosisiX,11); printf("[   ]");

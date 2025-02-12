@@ -47,13 +47,13 @@ void inputLayanan1(int n) {
         gotoxy(batasKiri+50, 11); printf("| RP.%-37s|", " ");
 
         gotoxy(batasKiri, 14); printf("Status Layanan");
-        gotoxy(batasKiri+50, 14); printf("| %-40s|", " ");
+        gotoxy(batasKiri+50, 14); printf("| %-40s|", "Tersedia");
 
         gotoxy(57, 8); getteks(layanan.jenisLyn, 20);
 
         getRp(&layanan.hargaLyn, 5, 9, 60, 11);
 
-        gotoxy(57, 14); getteks(layanan.status, 15);
+        strcpy(layanan.status, "Tersedia");
 
         fwrite(&layanan, sizeof(layanan), 1, fileLayanan);
     }
@@ -78,12 +78,12 @@ void readdataLayanan2() {
 
 
     while (fread(&layanan, sizeof(layanan), 1, fileLayanan) == 1) {
-        printTable(10, 100, 3, 38);
+        printTable(20, 100, 3, 38);
         gotoxy(0, 6); SetColor(colorScText);
-        gotoxy(10, 4);printf(" %-10s   %-25s   %-20s   %-20s\n", id, jenis, harga, status);
+        gotoxy(20, 4);printf(" %-10s   %-25s   %-20s   %-20s\n", id, jenis, harga, status);
         char hargaLayan[20];
         rupiah(layanan.hargaLyn, hargaLayan);
-        gotoxy(10, yTeks);printf(" %-10s   %-25s   RP.%-17s   %-20s\n", layanan.idLyn, layanan.jenisLyn, hargaLayan, layanan.status);
+        gotoxy(20, yTeks);printf(" %-10s   %-25s   RP.%-17s   %-20s\n", layanan.idLyn, layanan.jenisLyn, hargaLayan, layanan.status);
         if (i % 35 == 0) {
             getchar(); // Wait for user input
             cleanKiri();
@@ -105,8 +105,8 @@ void updateLayanan() {
     cleanKanan();
     readdataLayanan2();
     gotoxy(135, 5); SetColor(text2);
-    gotoxy(135, 10); printf("ID Layanan : [      ]");
-    gotoxy(150, 10); getteks(idLayanan, 4);
+    gotoxy(135, 10); printf("ID Layanan : [       ]");
+    gotoxy(150, 10); getteks(idLayanan, 5);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -182,7 +182,6 @@ void updateLayanan() {
         }
     } else {
         showMessage("ALERT!", "ID Layanan tidak ditemukan");
-        gotoxy(115+22, 10); printf("%s", "    ");
         goto retype;
     }
     fclose(fileLayanan);
@@ -205,8 +204,8 @@ void deleteDataLayanan() {
     gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
     gotoxy(PosisiX - 5, 40); printf("%38c", space);
     SetColor(text2);
-    gotoxy(PosisiX, 10); printf("ID Layanan : [      ]");
-    gotoxy(PosisiX+15, 10); getteks(idLayanan, 4);
+    gotoxy(PosisiX, 10); printf("ID Layanan : [       ]");
+    gotoxy(PosisiX+15, 10); getteks(idLayanan, 5);
 
     //Membuka file asli dengan mode rb
     fileLayanan = fopen("../Database/dat/Layanan.dat", "rb");
@@ -247,7 +246,6 @@ void deleteDataLayanan() {
     }
     if (found == 0) {
         showMessage("ALERT!", "ID Diskon tidak ditemukan");
-        gotoxy(115+22, 10); printf("%s", "    ");
         goto retype;
     }
     //Menutup file asli dan file temporary setelah digunakan

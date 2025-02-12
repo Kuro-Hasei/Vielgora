@@ -6,18 +6,67 @@ void transaksiPenjualan() {
     cleanKanan();
     int PosisiX = 130;
     int batasKiri = 5;
-    char idItem[10], idDiskon[10], idLayanan[10], idKaryawan[10], lastID[10], idGaransi[10], namaBarang[50];
+    char idItem[10], idDiskon[10], idLayanan[10], idKaryawan[10], lastID[10], idGaransi[10], namaBarang[50], jenisDiskon[20], jenisLayanan[20], jenisGaransi[20];
     int jumlah, jenisPilihan;
     int foundBarang = 0, foundKaryawan = 0;
     int hargaBarang = 0, hargaLayanan = 0, totalDiskon = 0;
     int lastNumber = 0;
+    int yTeks = 6;
+    int i = 1;
 
-    readdataKaryawanINJS();
+    filePenjualan = fopen("../Database/dat/Penjualan.dat", "ab+");
+    if (filePenjualan == NULL) {
+        perror("Failed to open Penjualan.dat");
+        return;
+    }
+
+    // Cek ID terakhir transaksi
+    FILE *fileCheck = fopen("../Database/dat/Penjualan.dat", "rb");
+    if (fileCheck != NULL) {
+        while (fread(&penjualan, sizeof(penjualan), 1, fileCheck) == 1) {
+            strcpy(lastID, penjualan.idPenjualan);
+        }
+        fclose(fileCheck);
+    }
+
+    // Generate ID transaksi unik
+    if (sscanf(lastID, "PJ%d", &lastNumber) == 1) {
+        lastNumber++;
+    } else {
+        lastNumber = 1;
+    }
+    snprintf(penjualan.idPenjualan, sizeof(penjualan.idPenjualan), "PJ%d", lastNumber);
+
+    fileKaryawan = fopen("../Database/dat/Karyawan.dat", "rb");
+    if (fileKaryawan == NULL) {
+        perror("Failed to open file");
+        return;
+    }
+
+    cleanKiri();
+    while (fread(&karyawan, sizeof(karyawan), 1, fileKaryawan) == 1) {
+        if (strcmp(karyawan.jabatan, "Kasir") == 0) {
+            printTable(20, 100, 3, 38);
+            gotoxy(0, 6); SetColor(colorScText);
+            gotoxy(20, 4); printf(" %-8s   %-25s   %-20s   %-15s\n", "ID", "NAMA", "JABATAN", "STATUS");
+            gotoxy(20, yTeks); printf(" %-8s   %-25s   %-20s   %-15s\n", karyawan.id, karyawan.namaKry, karyawan.jabatan, karyawan.status);
+            if (i % 30 == 0) {
+                getchar(); // Wait for user input
+                cleanKiri();
+                yTeks = 5; // Reset yTeks after clearing screen
+            }
+            i++;
+            yTeks++;
+        }
+    }
+    fclose(fileKaryawan);
+
     SetColor(text2);
     gotoxy(PosisiX,10); printf("Masukkan ID Karyawan: ");
-    gotoxy(PosisiX,11); printf("[      ]");
-    gotoxy(PosisiX+2,11); getteks(idKaryawan, 4);
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idKaryawan, 5);
     cleanKanan();
+
 
     // Buka file karyawan dan cari ID
     fileKaryawan = fopen("../Database/dat/Karyawan.dat", "rb");
@@ -68,53 +117,50 @@ void transaksiPenjualan() {
         return;
     }
 
-    filePenjualan = fopen("../Database/dat/Penjualan.dat", "ab+");
-    if (filePenjualan == NULL) {
-        perror("Failed to open Penjualan.dat");
-        return;
-    }
-
-    // Cek ID terakhir transaksi
-    FILE *fileCheck = fopen("../Database/dat/Penjualan.dat", "rb");
-    if (fileCheck != NULL) {
-        while (fread(&penjualan, sizeof(penjualan), 1, fileCheck) == 1) {
-            strcpy(lastID, penjualan.idPenjualan);
-        }
-        fclose(fileCheck);
-    }
-
-    // Generate ID transaksi unik
-    if (sscanf(lastID, "PJ%d", &lastNumber) == 1) {
-        lastNumber++;
-    } else {
-        lastNumber = 1;
-    }
-    snprintf(penjualan.idPenjualan, sizeof(penjualan.idPenjualan), "PJ%d", lastNumber);
-
     SetColor(text2);
     gotoxy(PosisiX,10); printf("Masukkan ID Barang");
-    gotoxy(PosisiX,11); printf("[      ]");
-    gotoxy(PosisiX+2,11); getteks(idItem, 4);
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idItem, 5);
+    cleanKanan();
+
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan jumlah barang");
+    gotoxy(PosisiX,11); printf("[   ]");
+    gotoxy(PosisiX+2,11); getnum(&jumlah, 1);
     cleanKanan();
 
     if (jenisPilihan == 1) {
-        fileProduk = fopen("../Database/dat/Produk.dat", "rb");
+        fileProduk = fopen("../Database/dat/Produk.dat", "rb+");
         while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
             if (strcmp(produk.idPrd, idItem) == 0) {
                 foundBarang = 1;
                 hargaBarang = produk.harga;
-                strcpy(namaBarang, produk.namaPrd); // Simpan nama produk
+                produk.quantity -= jumlah;
+                strcpy(namaBarang, produk.namaPrd);
+
+                // Geser pointer file ke posisi yang benar
+                fseek(fileProduk, -sizeof(produk), SEEK_CUR);
+
+                // Tulis ulang data yang sudah diubah
+                fwrite(&produk, sizeof(produk), 1, fileProduk);
                 break;
             }
         }
         fclose(fileProduk);
     } else {
-        fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb");
+        fileAksessoris = fopen("../Database/dat/Aksesoris.dat", "rb+");
         while (fread(&aksessoris, sizeof(aksessoris), 1, fileAksessoris) == 1) {
             if (strcmp(aksessoris.idAks, idItem) == 0) {
                 foundBarang = 2;
                 hargaBarang = aksessoris.harga;
-                strcpy(namaBarang, aksessoris.namaAks); // Simpan nama aksesoris
+                aksessoris.quantity -= jumlah;
+                strcpy(namaBarang, aksessoris.namaAks);
+
+                // Geser pointer file ke posisi yang benar
+                fseek(fileAksessoris, -sizeof(aksessoris), SEEK_CUR);
+
+                // Tulis ulang data yang sudah diubah
+                fwrite(&aksessoris, sizeof(aksessoris), 1, fileAksessoris);
                 break;
             }
         }
@@ -126,76 +172,67 @@ void transaksiPenjualan() {
         return;
     }
 
+    // Cek apakah ada diskon
+    cleanKiri();
+    readdataDiskon2();
     SetColor(text2);
-    gotoxy(PosisiX,10); printf("Masukkan jumlah barang");
-    gotoxy(PosisiX,11); printf("[   ]");
-    gotoxy(PosisiX+2,11); getnum(&jumlah, 1);
+    gotoxy(PosisiX,10); printf("Masukkan ID Diskon (0 = Tidak Ada)");
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idDiskon, 5);
     cleanKanan();
 
-    // Cek apakah ada diskon
     fileDiskon = fopen("../Database/dat/Diskon.dat", "rb");
-    if (fileDiskon != NULL) {
-        cleanKiri();
-        readdataDiskon2();
-        SetColor(text2);
-        gotoxy(PosisiX,10); printf("Masukkan ID Diskon (0 = Tidak Ada)");
-        gotoxy(PosisiX,11); printf("[      ]");
-        gotoxy(PosisiX+2,11); getteks(idDiskon, 4);
-        cleanKanan();
-        fileDiskon = fopen("../Database/dat/Diskon.dat", "rb");
-        if (strcmp(idDiskon, "0") != 0) {
-            while (fread(&diskon, sizeof(diskon), 1, fileDiskon) == 1) {
-                if (strcmp(diskon.idDsk, idDiskon) == 0) {
-                    totalDiskon = (hargaBarang * jumlah * atoi(diskon.persentase)) / 100;
-                    break;
-                }
+    if (strcmp(idDiskon, "0") != 0) {
+        while (fread(&diskon, sizeof(diskon), 1, fileDiskon) == 1) {
+            if (strcmp(diskon.idDsk, idDiskon) == 0) {
+                strcpy(jenisDiskon, diskon.jenisDsk);
+                totalDiskon = (hargaBarang * jumlah * atoi(diskon.persentase)) / 100;
+                break;
             }
         }
-        fclose(fileDiskon);
     }
+    fclose(fileDiskon);
 
     // Cek layanan tambahan
+    cleanKiri();
+    readdataLayanan2();
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan ID Layanan (0 = Tidak Ada)");
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idLayanan, 5);
+    cleanKanan();
+
     fileLayanan = fopen("../Database/dat/Layanan.dat", "rb");
-    if (fileLayanan != NULL) {
-        cleanKiri();
-        readdataLayanan2();
-        SetColor(text2);
-        gotoxy(PosisiX,10); printf("Masukkan ID Layanan (0 = Tidak Ada)");
-        gotoxy(PosisiX,11); printf("[      ]");
-        gotoxy(PosisiX+2,11); getteks(idLayanan, 4);
-        cleanKanan();
-        fileLayanan = fopen("../Database/dat/Layanan.dat", "rb");
-        if (strcmp(idLayanan, "0") != 0) {
-            while (fread(&layanan, sizeof(layanan), 1, fileLayanan) == 1) {
-                if (strcmp(layanan.idLyn, idLayanan) == 0) {
-                    hargaLayanan = layanan.hargaLyn;
-                    break;
-                }
+    if (strcmp(idLayanan, "0") != 0) {
+        while (fread(&layanan, sizeof(layanan), 1, fileLayanan) == 1) {
+            if (strcmp(layanan.idLyn, idLayanan) == 0) {
+                strcpy(jenisLayanan, layanan.jenisLyn);
+                hargaLayanan = layanan.hargaLyn;
+                break;
             }
         }
-        fclose(fileLayanan);
     }
+    fclose(fileLayanan);
 
     // Cek Garansi
+    cleanKiri();
+    readdataGaransiINJS();
+    SetColor(text2);
+    gotoxy(PosisiX,10); printf("Masukkan ID Garansi (0 = Tidak Ada)");
+    gotoxy(PosisiX,11); printf("[       ]");
+    gotoxy(PosisiX+2,11); getteks(idGaransi, 5);
+    cleanKanan();
+
     fileGaransi = fopen("../Database/dat/Garansi.dat", "rb");
-    if (fileGaransi != NULL) {
-        cleanKiri();
-        readdataGaransiINJS();
-        SetColor(text2);
-        gotoxy(PosisiX,10); printf("Masukkan ID Garansi (0 = Tidak Ada)");
-        gotoxy(PosisiX,11); printf("[      ]");
-        gotoxy(PosisiX+2,11); getteks(idGaransi, 4);
-        cleanKanan();
-        fileGaransi = fopen("../Database/dat/Garansi.dat", "rb");
-        if (strcmp(idGaransi, "0") != 0) {
-            while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
-                if (strcmp(garansi.idGrns, idGaransi) == 0) {
-                    break;
-                }
+    if (strcmp(idGaransi, "0") != 0) {
+        while (fread(&garansi, sizeof(garansi), 1, fileGaransi) == 1) {
+            if (strcmp(garansi.idGrns, idGaransi) == 0) {
+                strcpy(jenisGaransi, garansi.jenisGrns);
+                break;
             }
         }
-        fclose(fileGaransi);
     }
+    fclose(fileGaransi);
 
     // Simpan transaksi
     time_t t = time(NULL);
@@ -224,7 +261,9 @@ void transaksiPenjualan() {
 
     // Menampilkan struk
     cleanKiri();
+    SetColor(colorHeadText);
     gotoxy(batasKiri, 5); printf("=== [ DATA PENJUALAN ] ==============");
+    SetColor(text2);
     gotoxy(batasKiri, 8); printf("ID Penjualan");
     gotoxy(batasKiri+50, 8); printf("| %-40s|", penjualan.idPenjualan);
 
@@ -243,14 +282,14 @@ void transaksiPenjualan() {
     gotoxy(batasKiri, 18); printf("Total Harga");
     gotoxy(batasKiri+50, 18); printf("| RP.%-37s|", totalHarga);
 
-    gotoxy(batasKiri, 20); printf("Diskon (%s)", diskon.jenisDsk);
+    gotoxy(batasKiri, 20); printf("Diskon (%s)", jenisDiskon);
     gotoxy(batasKiri+50, 20); printf("| RP.%-37s|", diskonPembelian);
 
-    gotoxy(batasKiri, 22); printf("Layanan (%s)", layanan.jenisLyn);
+    gotoxy(batasKiri, 22); printf("Layanan (%s)", jenisLayanan);
     gotoxy(batasKiri+50, 22); printf("| RP.%-37s|", layananPengecekan);
 
-    gotoxy(batasKiri, 24); printf("Garansi (%s)", garansi.jenisGrns);
-    gotoxy(batasKiri+50, 24); printf("| %d %-38s|", penjualan.garansi, "Tahun");
+    gotoxy(batasKiri, 24); printf("Garansi (%s)", jenisGaransi);
+    gotoxy(batasKiri+50, 24); printf("| %d %-38s|", penjualan.garansi, "Bulan");
 
     gotoxy(batasKiri, 26); printf("Total Bayar");
     gotoxy(batasKiri+50, 26); printf("| RP.%-37s|", totalBayar);
@@ -270,7 +309,7 @@ void displayTransaksiPenjualan() {
     int batasKiri = 5;
     int found = 0;
     char idPenjualanCari[10];
-    int yTeks = 6;
+    int yTeks = 0;
     int i = 1;
     int pilihan;
 
@@ -280,7 +319,9 @@ void displayTransaksiPenjualan() {
         perror("Failed to open Penjualan.dat");
         return;
     }
-                // MENAMPILKAN KE LAYAR ISI DARI FILE
+
+    // MENAMPILKAN KE LAYAR ISI DARI FILE
+    yTeks = 6;
     while (fread(&penjualan, sizeof(penjualan), 1, filePenjualan) == 1) {
         printTable(20, 100, 3, 35);
         gotoxy(0, 6); SetColor(colorScText);
@@ -292,11 +333,11 @@ void displayTransaksiPenjualan() {
         if (i % 35 == 0) {
             getchar();
             cleanKiri();
+            yTeks = 6;
         }
         i++;
         yTeks++;
-    }
-    getchar(); getchar();
+    } getchar();
     cleanKanan();
 
     // MENUTUP FILE
@@ -344,7 +385,9 @@ void displayTransaksiPenjualan() {
 
     // Menampilkan struk
     cleanKiri();
+    SetColor(colorHeadText);
     gotoxy(batasKiri, 5); printf("=== [ DATA PENJUALAN ] ==============");
+    SetColor(text2);
     gotoxy(batasKiri, 8); printf("ID Penjualan");
     gotoxy(batasKiri+50, 8); printf("| %-40s|", penjualan.idPenjualan);
 

@@ -32,10 +32,9 @@ void inputSupplier(int n) {
 
         // Menampilkan Teks Untuk Input
         SetColor(text2);
-        gotoxy(batasKiri, 3); printf("=MASUKKAN DATA SUPPLIER===========");
+        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA SUPPLIER ] ===========");
         gotoxy(batasKiri, 5); printf("ID Supplier");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", supplier.idSpl);
-
 
         gotoxy(batasKiri, 8); printf("Nama Supplier");
         gotoxy(batasKiri+50, 8); printf("| %-40s|", " ");
@@ -50,8 +49,11 @@ void inputSupplier(int n) {
         gotoxy(batasKiri+50, 17); printf("| %-40s|", "Aktif");
 
         gotoxy(57, 8); getteks(supplier.namaSpl, 50);
+
         gotoxy(57, 11); getteks(supplier.alamat, 50);
+
         gotoxy(57, 14); getno(supplier.noTelp, 13);
+
         strcpy(supplier.status, "Aktif");
 
         fwrite(&supplier, sizeof(supplier), 1, fileSupplier);
@@ -71,7 +73,7 @@ void readdataSupplierALL() {
     int i = 1;
     int yTeks = 6;
 
-    FILE *fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
+    fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
     if (fileSupplier == NULL) {
         perror("Failed to open file");
         return;
@@ -84,7 +86,7 @@ void readdataSupplierALL() {
         gotoxy(10, 4);printf(" %-8s   %-20s   %-25s   %-15s   %10s\n", id, nama, alamat, noTelpn, status);
         gotoxy(10,yTeks); printf(" %-8s   %-20s   %-25s   %-15s   %10s\n", supplier.idSpl, supplier.namaSpl, supplier.alamat, supplier.noTelp, supplier.status);
 
-        if (i % 35 == 0) {
+        if (i % 30 == 0) {
             getchar();
             cleanKiri();
             yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
@@ -108,11 +110,11 @@ void readDetailSupplier() {
     gotoxy(130, 41); printf("%38c", ' ');
     gotoxy(130, 5); SetColor(text2);
     gotoxy(135, 13); printf("Masukkan ID Supplier");
-    gotoxy(135, 15); printf("[        ]");
+    gotoxy(135, 15); printf("[       ]");
 
     readdataSupplierALL();
 
-    gotoxy(137, 15); getteks(idSplr, 4);
+    gotoxy(137, 15); getteks(idSplr, 5);
     cleanKiri();
 
     int i = 1;
@@ -145,7 +147,7 @@ void readDetailSupplier() {
         gotoxy(batasKiri+50, 14); printf("| %-40s|", supplier.noTelp);
 
         gotoxy(batasKiri, 17); printf("Status");
-        gotoxy(batasKiri+50, 17); printf("| %-40s|", karyawan.status);
+        gotoxy(batasKiri+50, 17); printf("| %-40s|", supplier.status);
     } else {
         showMessage("ALERT!", "ID Supplier tidak ditemukan");
         goto retype;
@@ -167,13 +169,13 @@ void updateSupplier() {
     cleanKanan();
     readdataSupplierALL();
     gotoxy(135, 5); SetColor(text2);
-    gotoxy(135, 10); printf("ID Supplier : [      ]");
-    gotoxy(149, 10); getteks(idSupplier, 4);
+    gotoxy(135, 10); printf("ID Supplier : [       ]");
+    gotoxy(151, 10); getteks(idSupplier, 5);
 
     //Membuka file asli dengan mode rb
     fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
     //Membuka file temporary dengan mode wb
-    tempSupplier = fopen("../Database/Temp/SupplierTemp.dat", "wb");
+    tempSupplier = fopen("../Database/Temp/Temp.dat", "wb");
     //Pencarian data dalam file menggunakan loopung
     while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
@@ -199,14 +201,14 @@ void updateSupplier() {
         gotoxy(batasKiri+50, 5); printf("| %-40s|", supplier.alamat);
 
         gotoxy(batasKiri, 6); printf("No Telepon");
-        gotoxy(batasKiri+50, 6); printf("| %-40d|", supplier.noTelp);
+        gotoxy(batasKiri+50, 6); printf("| %-40s|", supplier.noTelp);
 
         gotoxy(batasKiri, 7); printf("Status");
         gotoxy(batasKiri+50, 7); printf("| %-40s|", supplier.status);
 
         // MENAMPILKAN TEKS UNTUK INPUT
         SetColor(colorHeadText);
-        gotoxy(batasKiri, 13); printf("=MASUKKAN DATA YANG BARU===========");
+        gotoxy(batasKiri, 13); printf("=== [ MASUKKAN DATA YANG BARU ] ===========");
         SetColor(text2);
         gotoxy(batasKiri, 15); printf("ID Supplier");
         gotoxy(batasKiri+50, 15); printf("| %-40s|", supplier.idSpl);
@@ -235,15 +237,13 @@ void updateSupplier() {
         char statusTemp[10];
         gotoxy(57, 23); getteks(statusTemp, 10);
 
-        fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
-
         if (doaction("UBAH DATA") == 1) {
-            strcpy(supplier.idSpl, idSupplier);
             strcpy(supplier.namaSpl, namTemp);
             strcpy(supplier.noTelp, tlpTemp);
             strcpy(supplier.alamat, alamatTemp);
             strcpy(supplier.status, statusTemp);
-            fwrite(&supplier, sizeof(supplier), 1, fileSupplier);
+
+            fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
             while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
                 fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
             } showMessage("ATTENTION!!", "Data berhasil diubah!");
@@ -262,8 +262,7 @@ void updateSupplier() {
 }
 
 void deleteDataSupplier() {
-    int found;
-    found = 0;
+    int found = 0;
     char idSupplier[10];
     int batasKiri = 5;
     int PosisiX = 135;
@@ -277,17 +276,19 @@ void deleteDataSupplier() {
     gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
     gotoxy(PosisiX - 5, 40); printf("%38c", space);
     SetColor(text2);
-    gotoxy(PosisiX, 10); printf("ID Supplier : [      ]");
-    gotoxy(PosisiX+16, 10); getteks(idSupplier, 4);
+    gotoxy(PosisiX, 10); printf("ID Supplier : [       ]");
+    gotoxy(PosisiX+16, 10); getteks(idSupplier, 5);
+
     //Membuka file asli dengan mode rb
     fileSupplier = fopen("../Database/dat/Supplier.dat", "rb");
     //Membuka file temporary dengan mode wb
-    tempSupplier = fopen("../Database/Temp/SupplierTemp.dat", "wb");
+    tempSupplier = fopen("../Database/Temp/Temp.dat", "wb");
     //Pencarian data dalam file menggunakan loopung
     while (fread(&supplier, sizeof(supplier), 1, fileSupplier) == 1) {
         //Jika data ditemukan maka nilai variabel found menjadi true atau 1
         if (strcmp(idSupplier, supplier.idSpl) == 0) {
             cleanKiri();
+            SetColor(text2);
             gotoxy(batasKiri, 5); printf("ID Supplier");
             gotoxy(batasKiri+50, 5); printf("| %-40s|", supplier.idSpl);
 
@@ -298,7 +299,7 @@ void deleteDataSupplier() {
             gotoxy(batasKiri+50, 11); printf("| %-40s|", supplier.alamat);
 
             gotoxy(batasKiri, 14); printf("No Telepon");
-            gotoxy(batasKiri+50, 14); printf("| %-40d|", supplier.noTelp);
+            gotoxy(batasKiri+50, 14); printf("| %-40s|", supplier.noTelp);
 
             gotoxy(batasKiri, 17); printf("Status");
             gotoxy(batasKiri+50, 17); printf("| %-40s|", supplier.status);
@@ -308,7 +309,7 @@ void deleteDataSupplier() {
             if (deleteData() == 1) {
                 found = 1;
                 showMessage("ATTENTION!!", "Data berhasil dihapus!");
-                return;
+                continue;
             } else {
                 found = 1;
                 fwrite(&supplier, sizeof(supplier), 1, tempSupplier);
@@ -374,7 +375,7 @@ void menuUpdateSupplier() {
     //Membuka file asli dengan mode wb
     fileSupplier = fopen("../Database/dat/Supplier.dat", "wb");
     //Membuka file temporary dengan mode rb
-    tempSupplier = fopen("../Database/Temp/SupplierTemp.dat", "rb");
+    tempSupplier = fopen("../Database/Temp/Temp.dat", "rb");
 
     //Proses menyalin kembali semua data dari file temporary ke file asli
     while (fread(&supplier, sizeof(supplier), 1, tempSupplier)==1) {
@@ -393,7 +394,7 @@ void menuDeleteSupplier() {
     //Membuka file asli dengan mode wb
     fileSupplier = fopen("../Database/dat/Supplier.dat", "wb");
     //Membuka file temporary dengan mode rb
-    tempSupplier = fopen("../Database/Temp/SupplierTemp.dat", "rb");
+    tempSupplier = fopen("../Database/Temp/Temp.dat", "rb");
 
     //Proses menyalin kembali semua data dari file temporary ke file asli
     while (fread(&supplier, sizeof(supplier), 1, tempSupplier)==1) {

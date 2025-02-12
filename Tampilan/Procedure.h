@@ -259,7 +259,7 @@ int validateDate(int day, int month, int year) {
     if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
         return 0;
     }
-    if (year < 1900 || year > 2100) { // batas tahun
+    if (year < 1900 || year > 2025) { // batas tahun
         return 0; // Tahun tidak valid
     }
     return 1;

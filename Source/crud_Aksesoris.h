@@ -33,7 +33,7 @@ void inputAksesoris1(int n) {
 
         // Menampilkan Teks Untuk Input
         SetColor(colorHeadText);
-        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA PRODUK ] ===========");
+        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA AKSESSORIS ] ===========");
         SetColor(text2);
         gotoxy(batasKiri, 5); printf("ID Aksesoris");
         gotoxy(batasKiri+50, 5); printf("| %-40s|", aksessoris.idAks);
@@ -70,7 +70,7 @@ void readdataAksesoris2() {
     char jenis[] = "JENIS";
     char nama[] = "NAMA";
     char harga[] = "HARGA";
-    char qt[] = "QUANTITY";
+    char qt[] = "JUMLAH";
 
     int i = 1;
     int yTeks = 6;
@@ -109,8 +109,8 @@ void updateAksesoris() {
     cleanKanan();
     readdataAksesoris2();
     gotoxy(135, 5); SetColor(text2);
-    gotoxy(135, 10); printf("ID Aksessoris : [      ]");
-    gotoxy(153, 10); getteks(idAksesoris, 4);
+    gotoxy(135, 10); printf("ID Aksessoris : [       ]");
+    gotoxy(153, 10); getteks(idAksesoris, 5);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -214,8 +214,8 @@ void deleteDataAksessoris() {
     gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
     gotoxy(PosisiX - 5, 40); printf("%38c", space);
     SetColor(text2);
-    gotoxy(PosisiX, 10); printf("ID Aksessoris : [      ]");
-    gotoxy(PosisiX+18, 10); getteks(idAksesoris, 4);
+    gotoxy(PosisiX, 10); printf("ID Aksessoris : [       ]");
+    gotoxy(PosisiX+18, 10); getteks(idAksesoris, 5);
 
     char hargaAks[20];
     rupiah(aksessoris.harga, hargaAks);
@@ -241,7 +241,7 @@ void deleteDataAksessoris() {
             gotoxy(batasKiri, 14); printf("Harga Aksesoris");
             gotoxy(batasKiri+50, 14); printf("| RP. %-36s|", hargaAks);
 
-            gotoxy(batasKiri, 17); printf("Status Aksesoris");
+            gotoxy(batasKiri, 17); printf("Jumlah Aksesoris");
             gotoxy(batasKiri+50, 17); printf("| %-40d|", aksessoris.quantity);
             getchar();getchar();
 

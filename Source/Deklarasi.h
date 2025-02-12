@@ -61,7 +61,7 @@ char *statusNamaK[] = {"Aktif", "Tidak Aktif"};
 int jumlahStatus = 2;
 
 // Daftar kode gender
-char *genderKode[] = {"L", "P"};
+char *genderKode[] = {"l", "p"};
 char *genderNama[] = {"Laki-Laki", "Perempuan"};
 int jumlahGender = 2;
 
@@ -147,7 +147,6 @@ typedef struct {
     char idDsk[10];
     char jenisDsk[20];
     char persentase[10];
-    int batasPoin;
 } DTDiskon;
 DTDiskon diskon;
 FILE *fileDiskon;
@@ -189,8 +188,9 @@ FILE *tempPenjualan;
 /*==================== TRANSAKSI GARANSI ====================*/
 typedef struct {
     char idKlaimGaransi[10];
+    char namaProduk[40];
     char tanggalKlaimGaransi[15];
-    char deskripsiMasalah[100];
+    char status[20];
 } DTKlaimGaransi;
 DTKlaimGaransi klaimGaransi;
 FILE *fileKlaimGaransi;
@@ -201,7 +201,7 @@ typedef struct {
     char idTransaksiMember[10];
     char namaPelanggan[30];
     char tanggalAktivitas[15];
-    char totalPembayaran[15];
+    int totalPembayaran;
     char metodePembayaran[20];
 } DTTrskMember;
 DTTrskMember trskMember;

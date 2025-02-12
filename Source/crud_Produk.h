@@ -84,13 +84,13 @@ void readdataProduk2() {
 
     //MENAMPILKAN KE LAYAR ISI DARI FILE
     while (fread(&produk, sizeof(produk), 1, fileProduk) == 1) {
-        printTable(10, 100, 3, 38);
+        printTable(10, 105, 3, 38);
         gotoxy(0, 6); SetColor(colorScText);
-        gotoxy(10, 4);printf("  %-10s  %-15s  %-25s  %-20s  %-20s", id, jenis, nama, harga, status );
+        gotoxy(10, 4);printf("  %-10s  %-15s  %-30s  %-20s  %-20s", id, jenis, nama, harga, status );
         char hargaPrd[20];
         rupiah(produk.harga, hargaPrd);
-        gotoxy(10, yTeks); printf("  %-10s  %-15s  %-25s  RP. %-16s  %-20d", produk.idPrd, produk.jenisPrd, produk.namaPrd, hargaPrd, produk.quantity );
-        if (i % 35 == 0) {
+        gotoxy(10, yTeks); printf("  %-10s  %-15s  %-30s  RP. %-16s  %-20d", produk.idPrd, produk.jenisPrd, produk.namaPrd, hargaPrd, produk.quantity );
+        if (i % 30 == 0) {
             getchar();
             cleanKiri();
             yTeks = 5; // PADA SAAT BERHENTI, KOORDINAT UNTUK MENAMPILKAN DATA KARYAWAN AKAN RESET KEMBALI KE AWAL
@@ -113,8 +113,8 @@ void updateProduk() {
     cleanKanan();
     readdataProduk2();
     gotoxy(135, 5); SetColor(text2);
-    gotoxy(135, 10); printf("ID Produk : [      ]");
-    gotoxy(149, 10); getteks(idProduk, 4);
+    gotoxy(135, 10); printf("ID Produk : [       ]");
+    gotoxy(149, 10); getteks(idProduk, 5);
     /*gotoxy(115+8, 10); printf("ID Karyawan : [   ]");
     gotoxy(row+17, 15); getteks(No, 6);*/
 
@@ -217,8 +217,8 @@ void deleteDataProduk() {
     gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
     gotoxy(PosisiX - 5, 40); printf("%38c", space);
     SetColor(text2);
-    gotoxy(PosisiX, 10); printf("ID Produk : [      ]");
-    gotoxy(PosisiX+14, 10); getteks(idProduk, 4);
+    gotoxy(PosisiX, 10); printf("ID Produk : [       ]");
+    gotoxy(PosisiX+14, 10); getteks(idProduk, 5);
 
     //Membuka file asli dengan mode rb
     fileProduk = fopen("../Database/dat/Produk.dat", "rb");
@@ -242,8 +242,9 @@ void deleteDataProduk() {
             gotoxy(batasKiri, 14); printf("Harga Produk");
             gotoxy(batasKiri+50, 14); printf("| RP. %-36d|", produk.harga);
 
-            gotoxy(batasKiri, 17); printf("status Produk");
+            gotoxy(batasKiri, 17); printf("Jumlah Produk");
             gotoxy(batasKiri+50, 17); printf("| %-40d|", produk.quantity);
+
             getchar();
             getchar();
             if (deleteData() == 1) {
@@ -261,8 +262,8 @@ void deleteDataProduk() {
         }
     }
     if (found == 0) {
-        showMessage("ALERT!", "ID Karyawan tidak ditemukan");
-        return;
+        showMessage("ALERT!", "ID tidak ditemukan");
+        goto retype;
     }
     //Menutup file asli dan file temporary setelah digunakan
     fclose(fileProduk);

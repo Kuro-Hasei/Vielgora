@@ -71,7 +71,7 @@ void cleanKanan() {
 
 void cleanKiri() {
     char space = ' ';
-    for (int i = 1; i < 41; i++) {
+    for (int i = 1; i < 42; i++) {
         gotoxy(1, i);
         printf("%-124c", space);
     }
@@ -119,6 +119,10 @@ void frame() {
     SetColor(colorMainText);
     PrintFile("../TXT/Monitor.txt", 26, 5);
     PrintFile("../TXT/Vielgora.txt", 37, 12);
+    PrintFile("../TXT/Pojok kiri.txt", 2, 1);
+    PrintFile("../TXT/Pojok kanan.txt", 117, 1);
+    PrintFile("../TXT/Pojok bawahKna.txt", 117, 38);
+    PrintFile("../TXT/Pojok bawahKri.txt", 2, 38);
     SetColor(text2);
     gettodayDate(dateNow);
     gotoxy(56,25); printf("%s", dateNow);

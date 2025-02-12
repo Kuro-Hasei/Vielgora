@@ -273,14 +273,22 @@ void menumanager() {
     } while (1);
 }
 
-void login(int width, int height) {
+void login() {
+    int PosisiX = 135;
     char inputUsername[50];
     char inputPassword[50];
     int loginAttempts = 3;
 
+    char man[] = "M E N U  L O G I N";
+    char space = ' ';
+
     while (loginAttempts > 0) {
         system("cls"); // Membersihkan layar
         frame();  // Menggambar border
+        SetColor(colorHeadText);
+        gotoxy(PosisiX - 5, 2); printf("   %-35s", man);
+        gotoxy(PosisiX - 5, 40); printf("%38c", space);
+        SetColor(text2);
         printKotak(23,4,137,8);
 
         int PosisiX = 139; // Menyesuaikan posisi teks di tengah
@@ -323,7 +331,7 @@ void login(int width, int height) {
 
 void apk() {
     mainPage();
-    login(maxWidht, maxHeight);
+    login();
 }
 
 #endif//menu_h

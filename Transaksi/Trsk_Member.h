@@ -8,9 +8,10 @@ void inputTrsMember(int n) {
     system("cls");
     templateUI();
 
-    char kodeTrsMember[] = {"TRSMBR"};
+    char kodeTrsMember[] = {"TMB"};
     char kodeMember[] = {"MBR"};
     int idTerakhir = 0;
+    int idTerakhir2 = 0;
     int batasKiri = 5;
 
     fileTrskMember = fopen("../Database/dat/trskMember.dat", "ab+");
@@ -30,52 +31,58 @@ void inputTrsMember(int n) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
         sscanf(trskMember.idTransaksiMember, "%*[^0-9]%d", &idTerakhir);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
 
     // Membaca file untuk mendapatkan id terakhir
     while (fread(&member, sizeof(member), 1, fileMember) == 1) {
         // Membaca bagian integer lalu di simpan pada variabel idTerakhir
-        sscanf(member.id_Member, "%*[^0-9]%d", &idTerakhir);
+        sscanf(member.id_Member, "%*[^0-9]%d", &idTerakhir2);
     }
-    gotoxy(batasKiri, 2); SetColorBlock(3,7);
 
-    // Looping pembuatan id cabang
-    for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
+    for (int j = idTerakhir2+1; j <= idTerakhir2+n; j++) {
         // Generate ID otomatis
-        snprintf(trskMember.idTransaksiMember, sizeof(trskMember.idTransaksiMember), "%s%i", kodeTrsMember, i);
+        snprintf(member.id_Member, sizeof(member.id_Member), "%s%i", kodeMember, j);
 
-        // Generate ID otomatis
-        snprintf(member.id_Member, sizeof(member.id_Member), "%s%i", kodeMember, i);
+        // Looping pembuatan id cabang
+        for (int i = idTerakhir+1; i <= idTerakhir+n; i++) {
+            // Generate ID otomatis
+            snprintf(trskMember.idTransaksiMember, sizeof(trskMember.idTransaksiMember), "%s%i", kodeTrsMember, i);
 
-        // Menampilkan Teks Untuk Input
-        SetColor(colorHeadText);
-        gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA MEMBER ] ===========");
-        SetColor(text2);
-        gotoxy(batasKiri, 5); printf("ID Transaksi Member");
-        gotoxy(batasKiri+50, 5); printf("| %-40s|", trskMember.idTransaksiMember);
+            // Menampilkan Teks Untuk Input
+            SetColor(colorHeadText);
+            gotoxy(batasKiri, 3); printf("=== [ MASUKKAN DATA MEMBER ] ===========");
+            SetColor(text2);
+            gotoxy(batasKiri, 5); printf("ID Transaksi Member");
+            gotoxy(batasKiri+50, 5); printf("| %-40s|", trskMember.idTransaksiMember);
 
-        gotoxy(batasKiri, 8); printf("ID Member");
-        gotoxy(batasKiri+50, 8); printf("| %-40s|", member.id_Member);
+            gotoxy(batasKiri, 8); printf("ID Member");
+            gotoxy(batasKiri+50, 8); printf("| %-40s|", member.id_Member);
 
-        time_t t = time(NULL);
-        struct tm tm = *localtime(&t);
-        snprintf(trskMember.tanggalAktivitas, sizeof(trskMember.tanggalAktivitas), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+            strcpy(trskMember.namaPelanggan, member.id_Member);
 
-        gotoxy(batasKiri, 11); printf("Tanggal Pembuatan");
-        gotoxy(batasKiri+50, 11); printf("| %-40s|", trskMember.tanggalAktivitas);
+            time_t t = time(NULL);
+            struct tm tm = *localtime(&t);
+            snprintf(trskMember.tanggalAktivitas, sizeof(trskMember.tanggalAktivitas), "%02d-%02d-%04d", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
 
-        gotoxy(batasKiri, 14); printf("Total Pembayaran");
-        gotoxy(batasKiri+50, 14); printf("| %-40s|", "RP. 100.000 ");
+            gotoxy(batasKiri, 11); printf("Tanggal Pembuatan");
+            gotoxy(batasKiri+50, 11); printf("| %-40s|", trskMember.tanggalAktivitas);
 
-        gotoxy(batasKiri, 17); printf("Metode Pembayaran");
-        gotoxy(batasKiri+50, 17); printf("| %-40s|", "Cash");
+            gotoxy(batasKiri, 14); printf("Total Pembayaran");
+            gotoxy(batasKiri+50, 14); printf("| %-40s|", "RP. 100.000 ");
 
-        strcpy(trskMember.totalPembayaran, "RP. 100.000");
+            gotoxy(batasKiri, 17); printf("Metode Pembayaran");
+            gotoxy(batasKiri+50, 17); printf("| %-40s|", "Cash");
 
-        strcpy(trskMember.metodePembayaran, "Cash");
+            trskMember.totalPembayaran = 100000;
 
-        fwrite(&trskMember, sizeof(trskMember), 1, fileTrskMember);
-        getchar(); getchar();
+            strcpy(trskMember.metodePembayaran, "Cash");
+
+            getchar(); getchar();
+
+            inputMember(n);
+
+            fwrite(&trskMember, sizeof(trskMember), 1, fileTrskMember);
+            getchar(); getchar();
+        }
     }
     fclose(fileTrskMember);
     fclose(fileMember);
@@ -89,9 +96,8 @@ void readdataTrsMemberINJS() {
     char harga[] = "HARGA TOTAL";
     char metode[] = "METODE PEMBAYARAN";
     char tanggal[] = "TANGGAL AKTIVASI";
-
     int i = 1;
-    int yTeks = 6;
+    int yTeks = 0;
 
     fileTrskMember = fopen("../Database/dat/trskMember.dat", "rb");
     if (fileTrskMember == NULL) {
@@ -99,21 +105,17 @@ void readdataTrsMemberINJS() {
         return;
     }
 
-    fileMember = fopen("../Database/dat/Member.dat", "rb");
-    if (fileMember == NULL) {
-        perror("Failed to open file");
-        return;
-    }
-
-
-    while ((fread(&trskMember, sizeof(trskMember), 1, fileTrskMember) == 1) && fread(&member, sizeof(member), 1, fileMember)) {
+    yTeks = 6;
+    while ((fread(&trskMember, sizeof(trskMember), 1, fileTrskMember) == 1)) {
         printTable(15, 110, 3, 38);
         gotoxy(0, 6); SetColor(colorScText);
         gotoxy(15, 4); printf(" %-15s  %-15s  %-20s %-20s  %-15s\n", id, idM, harga, metode, tanggal);
+        char total[20];
+        rupiah(trskMember.totalPembayaran, total);
         gotoxy(15, yTeks); printf(" %-15s  %-15s  %-20s %-20s  %-15s\n",
-                             trskMember.idTransaksiMember, member.id_Member, trskMember.totalPembayaran, trskMember.metodePembayaran, trskMember.tanggalAktivitas);
+                             trskMember.idTransaksiMember, trskMember.namaPelanggan, total, trskMember.metodePembayaran, trskMember.tanggalAktivitas);
 
-        if (i % 35 == 0) {
+        if (i % 30 == 0) {
             getchar(); // Wait for user input
             cleanKiri();
             yTeks = 5; // Reset yTeks after clearing screen
@@ -141,11 +143,11 @@ void readDetailTrsMember() {
     gotoxy(PosisiX - 5, 40); printf("%38c", space);
     SetColor(text2);
     gotoxy(PosisiX, 13); printf("Masukkan ID Member");
-    gotoxy(PosisiX, 15); printf("[        ]");
+    gotoxy(PosisiX, 15); printf("[       ]");
 
     readdataTrsMemberINJS();
 
-    gotoxy(PosisiX+2, 15); getteks(idMmbr, 4);
+    gotoxy(PosisiX+2, 15); getteks(idMmbr, 5);
     cleanKiri();
 
     int i = 1;
@@ -204,7 +206,6 @@ void MenuAddTrsMember() {
     gotoxy(posisiX+19, 10); getnum(&n,1);
 
     inputTrsMember(n);
-    inputMember(n);
     system("cls");
     frame();
 }

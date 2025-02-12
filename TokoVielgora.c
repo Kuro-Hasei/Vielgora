@@ -8,6 +8,7 @@
 #include "Tampilan/menu.h"
 #include "Tampilan/Procedure.h"
 #include "Tampilan/Tampilan.h"
+#include "ProgramTemp/TempProgram.h"
 
 int main() {
     fullscreen();

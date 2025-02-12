@@ -16,8 +16,8 @@ void laporanTransaksiPenjualan() {
     char man[] = "L A P O R A N  P E N J U A L A N";
     char space = ' ';
 
-    int i = 1;
-    int yTeks = 6;
+    int i = 0;
+    int yTeks = 0;
 
     cleanKanan();
     do {
@@ -75,11 +75,13 @@ void laporanTransaksiPenjualan() {
                 // Tambahkan variabel untuk menyimpan total keseluruhan
                 int totalKeseluruhan = 0;
 
+                yTeks = 6;
                 // MENAMPILKAN KE LAYAR ISI DARI FILE
                 while (fread(&penjualan, sizeof(penjualan), 1, filePenjualan) == 1) {
                     printTable(20, 100, 3, 35);
                     gotoxy(0, 6); SetColor(colorScText);
                     gotoxy(20, 4); printf(" %-10s %-30s %-15s %-15s\n", "ID", "Barang", "Jumlah", "Total");
+
                     char total[20];
                     rupiah(penjualan.totalHarga, total);
                     int transBulan, transTahun;
@@ -87,17 +89,17 @@ void laporanTransaksiPenjualan() {
 
                     if ((menu == 1 && transBulan == bulan && transTahun == tahun) || (menu == 2 && transTahun == tahun)) {
                         found = 1;
-                        gotoxy(20, yTeks);
-                        printf(" %-10s %-30s %-15d RP.%-12s\n",
+                        gotoxy(20, yTeks); printf(" %-10s %-30s %-15d RP.%-12s\n",
                                penjualan.idPenjualan, penjualan.kategori, penjualan.totalPenjualan, total);
 
                         // Tambahkan total harga ke total keseluruhan
                         totalKeseluruhan += penjualan.totalHarga;
                     }
 
-                    if (i % 35 == 0) {
+                    if (i % 30 == 0) {
                         getchar();
                         cleanKiri();
+                        yTeks = 6;
                     }
                     i++;
                     yTeks++;
@@ -119,6 +121,7 @@ void laporanTransaksiPenjualan() {
 
                 if (!found) {
                     showMessage("ATTENTION", "Tidak ada transaksi pada periode tersebut.");
+                    return;
                 }
 
             } else if (menu == 3) {
@@ -145,8 +148,8 @@ void laporanTransaksiPembelian() {
     char man[] = "L A P O R A N  P E M B E L I A N";
     char space = ' ';
 
-    int i = 1;
-    int yTeks = 6;
+    int i = 0;
+    int yTeks = 0;
 
     cleanKanan();
     do {
@@ -204,6 +207,7 @@ void laporanTransaksiPembelian() {
                 // Tambahkan variabel untuk menyimpan total keseluruhan
                 int totalKeseluruhan = 0;
 
+                yTeks = 6;
                 // MENAMPILKAN KE LAYAR ISI DARI FILE
                 while (fread(&pembelian, sizeof(pembelian), 1, filePembelian) == 1) {
                     printTable(20, 100, 3, 35);
@@ -227,6 +231,7 @@ void laporanTransaksiPembelian() {
                     if (i % 35 == 0) {
                         getchar();
                         cleanKiri();
+                        yTeks = 6;
                     }
                     i++;
                     yTeks++;
@@ -275,8 +280,8 @@ void laporanMember() {
     char man[] = "L A P O R A N  M E M B E R";
     char space = ' ';
 
-    int i = 1;
-    int yTeks = 6;
+    int i = 0;
+    int yTeks = 0;
 
     cleanKanan();
     do {
@@ -334,6 +339,7 @@ void laporanMember() {
                 // Tambahkan variabel untuk menyimpan total keseluruhan
                 int totalKeseluruhan = 0;
 
+                yTeks = 6;
                 // MENAMPILKAN KE LAYAR ISI DARI FILE
                 while (fread(&trskMember, sizeof(trskMember), 1, fileTrskMember) == 1) {
                     printTable(20, 90, 3, 35);
@@ -357,6 +363,7 @@ void laporanMember() {
                     if (i % 35 == 0) {
                         getchar();
                         cleanKiri();
+                        yTeks = 6;
                     }
                     i++;
                     yTeks++;
@@ -404,8 +411,8 @@ void laporanGaransi() {
     char man[] = "L A P O R A N  M E M B E R";
     char space = ' ';
 
-    int i = 1;
-    int yTeks = 6;
+    int i = 0;
+    int yTeks = 0;
 
     cleanKanan();
     do {
@@ -460,22 +467,24 @@ void laporanGaransi() {
                     return;
                 }
 
+                yTeks = 6;
                 // MENAMPILKAN KE LAYAR ISI DARI FILE
                 while (fread(&klaimGaransi, sizeof(klaimGaransi), 1, fileKlaimGaransi) == 1) {
                     printTable(10, 110, 3, 35);
                     gotoxy(0, 6); SetColor(colorScText);
-                    gotoxy(10, 4); printf(" %-15s %-50s\n", "ID", "Keluhan");
+                    gotoxy(10, 4); printf(" %-15s %-30s %-20s\n", "ID", "NAMA PRODUK", "STATUS");
                     int transBulan, transTahun;
                     sscanf(klaimGaransi.tanggalKlaimGaransi, "%*d-%d-%d", &transBulan, &transTahun);
 
                     if ((menu == 1 && transBulan == bulan && transTahun == tahun) || (menu == 2 && transTahun == tahun)) {
-                        gotoxy(10, yTeks); printf(" %-15s %-50s\n",
-                            klaimGaransi.idKlaimGaransi, klaimGaransi.deskripsiMasalah);
+                        gotoxy(10, yTeks); printf(" %-15s %-30s %-20s\n",
+                            klaimGaransi.idKlaimGaransi, klaimGaransi.namaProduk, klaimGaransi.status);
                     }
 
-                    if (i % 35 == 0) {
+                    if (i % 30 == 0) {
                         getchar();
                         cleanKiri();
+                        yTeks = 6;
                     }
                     i++;
                     yTeks++;
